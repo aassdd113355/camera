@@ -1,0 +1,16 @@
+..\obj\exti.o: ..\HARDWARE\EXTI\exti.c
+..\obj\exti.o: ..\HARDWARE\EXTI\exti.h
+..\obj\exti.o: ..\SYSTEM\sys\sys.h
+..\obj\exti.o: ..\SYSTEM\sys\stm32f4xx.h
+..\obj\exti.o: ..\SYSTEM\sys\core_cm4.h
+..\obj\exti.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\exti.o: ..\SYSTEM\sys\core_cmInstr.h
+..\obj\exti.o: ..\SYSTEM\sys\core_cmFunc.h
+..\obj\exti.o: ..\SYSTEM\sys\core_cm4_simd.h
+..\obj\exti.o: ..\SYSTEM\sys\system_stm32f4xx.h
+..\obj\exti.o: ..\SYSTEM\delay\delay.h
+..\obj\exti.o: ..\HARDWARE\LED\led.h
+..\obj\exti.o: ..\HARDWARE\KEY\key.h
+..\obj\exti.o: ..\HARDWARE\BEEP\beep.h
+..\obj\exti.o: ..\HARDWARE\OV7670\ov7670.h
+..\obj\exti.o: ..\HARDWARE\OV7670\sccb.h
