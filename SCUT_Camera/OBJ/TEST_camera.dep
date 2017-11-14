@@ -1,6 +1,6 @@
-Dependencies for Project 'TEST', Target 'Target 1': (DO NOT MODIFY !)
+Dependencies for Project 'TEST', Target 'camera': (DO NOT MODIFY !)
 F (.\startup_stm32f40_41xxx.s)(0x5689F28D)(--cpu Cortex-M4.fp -g --apcs=interwork -I "C:\Users\惠普\Desktop\OV7670摄像头实验 - 2017-09-13\USER\RTE"-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 514" --pd "STM32F40_41xxx SETA 1"--list ..\obj\startup_stm32f40_41xxx.lst --xref -o ..\obj\startup_stm32f40_41xxx.o --depend ..\obj\startup_stm32f40_41xxx.d)
-F (.\test.c)(0x5A057DA7)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\HARDWARE\EXTI -I..\HARDWARE\WDG -I..\HARDWARE\TIMER -I..\HARDWARE\TPAD -I..\HARDWARE\OLED -I..\HARDWARE\LCD -I..\HARDWARE\OV7670 -I..\HARDWARE\Picture -I..\HARDWARE\DMA-I "C:\Users\惠普\Desktop\OV7670摄像头实验 - 2017-09-13\USER\RTE"-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx-o ..\obj\test.o --omf_browse ..\obj\test.crf --depend ..\obj\test.d)
+F (.\main.c)(0x5A0AAC25)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\HARDWARE\EXTI -I..\HARDWARE\WDG -I..\HARDWARE\TIMER -I..\HARDWARE\TPAD -I..\HARDWARE\OLED -I..\HARDWARE\LCD -I..\HARDWARE\OV7670 -I..\HARDWARE\Picture -I..\HARDWARE\DMA-I "C:\Users\惠普\Desktop\OV7670摄像头实验 - 2017-09-13\USER\RTE"-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
 I (..\SYSTEM\sys\sys.h)(0x5689F28D)
 I (..\SYSTEM\sys\stm32f4xx.h)(0x5689F28D)
 I (..\SYSTEM\sys\core_cm4.h)(0x5689F28D)
@@ -19,7 +19,7 @@ I (..\HARDWARE\OV7670\ov7670.h)(0x595CE4A1)
 I (..\HARDWARE\OV7670\sccb.h)(0x568A17E5)
 I (..\HARDWARE\TIMER\timer.h)(0x568A1EAA)
 I (..\HARDWARE\EXTI\exti.h)(0x568A1CB5)
-I (..\HARDWARE\Picture\Pic_Process.h)(0x5A057D42)
+I (..\HARDWARE\Picture\Pic_Process.h)(0x5A0AB094)
 I (..\HARDWARE\DMA\dma.h)(0x53FF3A2B)
 F (..\SYSTEM\delay\delay.c)(0x5689F28D)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\HARDWARE\EXTI -I..\HARDWARE\WDG -I..\HARDWARE\TIMER -I..\HARDWARE\TPAD -I..\HARDWARE\OLED -I..\HARDWARE\LCD -I..\HARDWARE\OV7670 -I..\HARDWARE\Picture -I..\HARDWARE\DMA-I "C:\Users\惠普\Desktop\OV7670摄像头实验 - 2017-09-13\USER\RTE"-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx-o ..\obj\delay.o --omf_browse ..\obj\delay.crf --depend ..\obj\delay.d)
 I (..\SYSTEM\delay\delay.h)(0x5689F28D)
@@ -76,7 +76,7 @@ I (..\HARDWARE\LCD\font.h)(0x5689F28D)
 I (..\SYSTEM\usart\usart.h)(0x594A27E7)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\SYSTEM\delay\delay.h)(0x5689F28D)
-I (..\HARDWARE\Picture\Pic_Process.h)(0x5A057D42)
+I (..\HARDWARE\Picture\Pic_Process.h)(0x5A0AB094)
 F (..\HARDWARE\OV7670\ov7670.c)(0x595EF2E4)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\HARDWARE\EXTI -I..\HARDWARE\WDG -I..\HARDWARE\TIMER -I..\HARDWARE\TPAD -I..\HARDWARE\OLED -I..\HARDWARE\LCD -I..\HARDWARE\OV7670 -I..\HARDWARE\Picture -I..\HARDWARE\DMA-I "C:\Users\惠普\Desktop\OV7670摄像头实验 - 2017-09-13\USER\RTE"-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx-o ..\obj\ov7670.o --omf_browse ..\obj\ov7670.crf --depend ..\obj\ov7670.d)
 I (..\SYSTEM\sys\sys.h)(0x5689F28D)
 I (..\SYSTEM\sys\stm32f4xx.h)(0x5689F28D)
@@ -132,8 +132,8 @@ I (..\HARDWARE\KEY\key.h)(0x5689F28D)
 I (..\HARDWARE\BEEP\beep.h)(0x5689F28D)
 I (..\HARDWARE\OV7670\ov7670.h)(0x595CE4A1)
 I (..\HARDWARE\OV7670\sccb.h)(0x568A17E5)
-F (..\HARDWARE\Picture\Pic_Process.c)(0x5A0588B4)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\HARDWARE\EXTI -I..\HARDWARE\WDG -I..\HARDWARE\TIMER -I..\HARDWARE\TPAD -I..\HARDWARE\OLED -I..\HARDWARE\LCD -I..\HARDWARE\OV7670 -I..\HARDWARE\Picture -I..\HARDWARE\DMA-I "C:\Users\惠普\Desktop\OV7670摄像头实验 - 2017-09-13\USER\RTE"-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx-o ..\obj\pic_process.o --omf_browse ..\obj\pic_process.crf --depend ..\obj\pic_process.d)
-I (..\HARDWARE\Picture\Pic_Process.h)(0x5A057D42)
+F (..\HARDWARE\Picture\Pic_Process.c)(0x5A0AB15B)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\HARDWARE\EXTI -I..\HARDWARE\WDG -I..\HARDWARE\TIMER -I..\HARDWARE\TPAD -I..\HARDWARE\OLED -I..\HARDWARE\LCD -I..\HARDWARE\OV7670 -I..\HARDWARE\Picture -I..\HARDWARE\DMA-I "C:\Users\惠普\Desktop\OV7670摄像头实验 - 2017-09-13\USER\RTE"-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx-o ..\obj\pic_process.o --omf_browse ..\obj\pic_process.crf --depend ..\obj\pic_process.d)
+I (..\HARDWARE\Picture\Pic_Process.h)(0x5A0AB094)
 I (..\SYSTEM\sys\sys.h)(0x5689F28D)
 I (..\SYSTEM\sys\stm32f4xx.h)(0x5689F28D)
 I (..\SYSTEM\sys\core_cm4.h)(0x5689F28D)

@@ -20,10 +20,26 @@ float gray_density_sum_array[256];   														 //用于存放各个灰度级的密度（
 int max_level,max = -1;
 int flag1,flag2,flag;
 int pixel_count[9]={0};
-int cI,cJ;
 
 
 
+ /* 函数名：cameraSysInit
+  *  描述  ：系统初始化
+  */ 
+void cameraSysInit()
+{
+	Stm32_Clock_Init(336,8,2,7);//设置时钟,168Mhz ， APB1 为 42Mhz， APB2 为 84Mhz， USB/SDIO/随机数发生器时钟为 48Mhz。
+	delay_init(168);			//延时初始化  
+	uart_init(84,115200);		//初始化串口波特率为115200 
+    OV7670_Init();
+	delay_ms(3500);	 
+	LED_Init();
+	OV7670_Light_Mode(0);
+	//TIM3_Int_Init(9999,8399);			//10Khz计数频率,1秒钟中断	
+	EXTI9_Init();						//使能定时器捕获
+	OV7670_Window_Set(10,174,240,320);	//设置窗口	  
+    OV7670_CS=0;
+}
 
  /* 函数名：CAMERA_Get_ImageCut
  * 描述  ：将从摄像头FIFO发过来的一张图片进行剪切存在数组中。
@@ -280,30 +296,8 @@ void Image_Sobel(void)
 	u8 Gx,Gy;
 	int yuzhi;
 
-	
-//		for(i = 1; i < HEIGHT - 1; i++) 
-//	{
-//		for(j = 1; j < WIDTH - 1; j++)
-//		{
-//			Pic_Buff[i][j] = (u8)((Pic_Buff[i-1][j-1] + 2*Pic_Buff[i-1][j] + Pic_Buff[i-1][j+1] + 2*Pic_Buff[i][j-1] + 4*Pic_Buff[i][j] + 2*Pic_Buff[i][j+1] + Pic_Buff[i+1][j-1] + 2*Pic_Buff[i+1][j] + Pic_Buff[i+1][j+1])/16);
-//		}
-//	}
-		//yuzhi = 0;
 	memcpy(Pic_Buff_Temp,Pic_Buff,HEIGHT*WIDTH*sizeof(u8));
-	
-//		for(i = 1; i < HEIGHT - 1; i++) 
-//	{
-//		for(j = 1; j < WIDTH - 1; j++)
-//		{
-//				yuzhi += Pic_Buff[i][j];
-//		}
-//	}
-//	
-//	yuzhi = yuzhi /(HEIGHT * WIDTH) * 0.5;
 
-	
-	
-	
 	for(i = 1; i < HEIGHT - 1; i++) 
 	{
 		for(j = 1; j < WIDTH - 1; j++)
@@ -317,9 +311,7 @@ void Image_Sobel(void)
 		}
 	}
 	
-	
-
-	 yuzhi = creatYuzhi(0.03);	//计算阈值
+	 yuzhi = creatYuzhi(0.04);	//计算阈值
 	
 		for(i = 1; i < HEIGHT - 1; i++) 
 	{
@@ -336,11 +328,7 @@ void Image_Sobel(void)
 		}
 	}
 	
-	
 
-
-	
-	
 	memset(Pic_Buff_Temp,0,HEIGHT*WIDTH*sizeof(u8));
 		
 }
@@ -385,6 +373,8 @@ int creatYuzhi(float x)
 void Sobel_After(void)
 {		int i,j;
 		u8 Gx,Gy;
+		int count=0;//统计区域像素个数
+		int yuzhi;
 	
 		memcpy(Pic_Buff_Temp,Pic_Buff_Dup,HEIGHT*WIDTH*sizeof(u8));
 	
@@ -395,23 +385,73 @@ void Sobel_After(void)
 		{
 			
 			
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6))
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-		
-
-			if(Gy + Gx > 100){
-				Pic_Buff_Dup[i][j] = 255;
-			}else{
-				Pic_Buff_Dup[i][j] = 0;
+			count=count+1;
+			Pic_Buff_Dup[i][j] = Gy + Gx;
+			}
+		}
+	}
+	
+	yuzhi = creatYuzhi_After(0.10, count);
+	
+		for(i = 1; i < HEIGHT - 1; i++) 
+	{
+		for(j = 1; j < WIDTH - 1; j++)
+		{
+			
+			
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
+			{
+				if(Pic_Buff[i][j] > yuzhi){
+					Pic_Buff_Dup[i][j] = 255;
+				}else{
+					Pic_Buff_Dup[i][j] = 0;
 			}
 			}
 		}
 	}
 	
-	
 	memset(Pic_Buff_Temp,0,HEIGHT*WIDTH*sizeof(u8));
+}
+
+
+//计算阈值 ,参数x 为百分比，参数num为区域内的像素数，  例如：0.03 为百分之三
+int creatYuzhi_After(float x, int num)
+{	u16 yuzhiIndex, yuzhuleiji;
+	int i,j,countTo255;
+	u16 sobel_gray_array[256];
+	
+	yuzhiIndex = num * x;
+	for(i = 0; i < 256; i++)    
+	{
+		sobel_gray_array[i] = 0;
+	}
+	
+	// 统计各灰度级的数量
+	for(i = 1; i < HEIGHT-1; i++) 
+	{
+		for(j = 1; j < WIDTH-1; j++)
+		{
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
+			{
+				sobel_gray_array[Pic_Buff_Dup[i][j]] = sobel_gray_array[Pic_Buff_Dup[i][j]] + 1; 
+			}
+		}
+	}	
+	
+	yuzhuleiji = 0;
+	countTo255 = 0;
+	for(i=255; yuzhuleiji<yuzhiIndex ; i--)
+	{
+		yuzhuleiji = yuzhuleiji + sobel_gray_array[i];
+		countTo255 = countTo255 + 1;
+	}
+	
+	
+	return (255 - countTo255);
 }
 
 
@@ -505,7 +545,7 @@ void Image_Send(void){
 }
 
 
-void Image_Send_After(void){
+void Image_Send_Dynamic(void){
 	int r;
 	int c;
 	
@@ -565,7 +605,7 @@ void Image_Send_After_Static(void){
  * 输入  ：无
  * 输出  ：无
  */
-void Water_Level(void)
+void Water_Level_Dynamic(void)
 {
 	
 	int pixel_count_sort[9]={0};
@@ -733,21 +773,14 @@ void Water_Level_Static(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > 15)
+			if(pixel_count[i] > 20)
 			{
 				max = i;
-			}else{
-			break;
 			}
 			
 	}
 	
-	if(max >= 6)
-	{
-		//发送停止信号
-		max = -1;
-		delay_ms(10000);
-	}
+
 }
 
 
