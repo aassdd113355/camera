@@ -406,7 +406,7 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source Group 1</GroupName>
+          <GroupName>startup</GroupName>
           <Files>
             <File>
               <FileName>startup_stm32f40_41xxx.s</FileName>
@@ -422,6 +422,11 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>Pic_Process.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\Picture\Pic_Process.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -449,16 +454,6 @@
           <GroupName>HARDWARE</GroupName>
           <Files>
             <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\LED\led.c</FilePath>
-            </File>
-            <File>
-              <FileName>ILI93xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\LCD\ILI93xx.c</FilePath>
-            </File>
-            <File>
               <FileName>ov7670.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\OV7670\ov7670.c</FilePath>
@@ -477,11 +472,6 @@
               <FileName>exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\EXTI\exti.c</FilePath>
-            </File>
-            <File>
-              <FileName>Pic_Process.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\Picture\Pic_Process.c</FilePath>
             </File>
             <File>
               <FileName>dma.c</FileName>

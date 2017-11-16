@@ -33,7 +33,7 @@ void cameraSysInit()
 	uart_init(84,115200);		//初始化串口波特率为115200 
     OV7670_Init();
 	delay_ms(3500);	 
-	LED_Init();
+	//LED_Init();
 	OV7670_Light_Mode(0);
 	//TIM3_Int_Init(9999,8399);			//10Khz计数频率,1秒钟中断	
 	EXTI9_Init();						//使能定时器捕获
@@ -41,117 +41,6 @@ void cameraSysInit()
     OV7670_CS=0;
 }
 
- /* 函数名：CAMERA_Get_ImageCut
- * 描述  ：将从摄像头FIFO发过来的一张图片进行剪切存在数组中。
- *         读240*320次，但是只根据参数存储图的一部分                2017-06-20 By BachMan
- * 输入  ：u16 x_pos, u16 y_pos  开始的位置， 宽度和高度则取决于WIDTH和HIGHT
- *				 应该确保	x_pos+width 不超320， y_pos + hight 不超过240																				
- * 输出  ：无
- */ 
-void CAMERA_Get_ImageCut(u16 x_pos, u16 y_pos)        // 2017-06-22 By BachMan 我们的行与列，跟摄像头的输出行与列正好相反。
-{
-	unsigned char color;
-	u16 col, row;
-	u16 c_count = 0, r_count = 0;
-
-		OV7670_RRST=0;																			//开始复位读指针 
-		OV7670_RCK=0;
-		OV7670_RCK=1;
-		OV7670_RCK=0;
-		OV7670_RRST=1;																			//复位读指针结束 
-		OV7670_RCK=1;  
-
-		for(row = 0; row <240; row++)
-		{
-			for(col = 0; col < 320; col++)
-			{
-				OV7670_RCK=0;
-				color=GPIOF->IDR&0X00FF;														//读数据
-//			YUYV_Y=GPIOF->IDR&0X00FF;
-				OV7670_RCK=1; 
-//			color<<=8;  
-				OV7670_RCK=0;
-//			color|=GPIOF->IDR&0XFF;	//读数据   因为时YUYV格式，第二个字节不用读取
-				OV7670_RCK=1; 
-				
-				if((col >= x_pos) && (row >= y_pos) && (col < (x_pos + WIDTH)) && (row < (y_pos + HEIGHT)))
-				{
-					if(c_count < WIDTH)          												// 如果c_count未到最后一列，则c_count增加 
-					{
-						Pic_Buff[r_count][c_count] = color;
-						c_count++;
-					}
-					else								        								//	如果c_count到了最后一列，则转到else中执行换行
-					{
-						c_count = 0;
-						r_count++;
-						Pic_Buff[r_count][c_count] = color;
-						c_count++;
-					}
-				}
-			}
-		}
-		
-		EXTI->PR=1<<9;     	 //清除LINE9上的中断标志位
-		ov_sta=0;					   //开始下一次采集
-}
-
- /* 函数名：CAMERA_Image_Cut_Compress_120160
- * 描述  ：将从摄像头FIFO发过来的一张图片进行剪切存在数组中。
- *         读240*320次，但是只根据参数存储图的一部分                2017-07-12 By BachMan
- * 输入  ：u16 x_pos, u16 y_pos  开始的位置， 宽度和高度则取决于WIDTH和HIGHT
- *				 应该确保	x_pos+width 不超160， y_pos + hight 不超过120																				
- * 输出  ：无
- */ 
-void CAMERA_Image_Cut_Compress_120160(u16 x_pos, u16 y_pos)        // 2017-07-13 采集图片和压缩图片和截图
-{
-	unsigned char color;
-	u16 col, row;
-	u16 c_count = 0, r_count = 0;
-
-		OV7670_RRST=0;																			//开始复位读指针 
-		OV7670_RCK=0;
-		OV7670_RCK=1;
-		OV7670_RCK=0;
-		OV7670_RRST=1;																			//复位读指针结束 
-		OV7670_RCK=1;  
-
-		for(row = 0; row <240; row++)
-		{
-			for(col = 0; col < 320; col++)
-			{
-				OV7670_RCK=0;
-				color=GPIOF->IDR&0X00FF;														//读数据
-//			YUYV_Y=GPIOF->IDR&0X00FF;
-				OV7670_RCK=1; 
-//			color<<=8;  
-		    OV7670_RCK=0;
-//			color|=GPIOF->IDR&0XFF;	//读数据   因为时YUYV格式，第二个字节不用读取
-				OV7670_RCK=1; 
-				if((row%2 == 0) && (col%2 == 0))
-				{
-						if((col/2 >= x_pos) && (row/2 >= y_pos) && (col/2 < (x_pos + WIDTH)) && (row/2 < (y_pos + HEIGHT)))
-						{
-							if(c_count < WIDTH)          										// 如果c_count未到最后一列，则c_count增加 
-							{
-								Pic_Buff[r_count][c_count] = color;
-								c_count++;
-							}
-							else								        						//	如果c_count到了最后一列，则转到else中执行换行
-							{
-								c_count = 0;
-								r_count++;
-								Pic_Buff[r_count][c_count] = color;
-								c_count++;
-							}
-						}
-				}
-			}
-		}
-		
-		EXTI->PR=1<<9;     	 //清除LINE9上的中断标志位
-		ov_sta=0;					   //开始下一次采集
-}
 
 
  /* 函数名：CAMERA_Image_Cut_Compress_6080
@@ -519,73 +408,52 @@ void Hough()
  * 输出  ：无
  */
 void Image_Send(void){
-	int r;
-	int c;
+
 	
 	
 	SendBuff[0] = x_circle;
 	SendBuff[1] = y_circle;
 	SendBuff[2] = r_circle;
 	
-	for(r = 0; r < HEIGHT; r++) 
-	{
-		for(c = 0; c < WIDTH; c++)
-		{
-			SendBuff[WIDTH * r+ c + 4] = Pic_Buff[r][c];
-		}
-	}
-	MYDMA_Config(DMA2_Stream7,4,(u32)&USART1->DR,(u32)SendBuff,SEND_BUF_SIZE);	//DMA2,STEAM7,CH4,外设为串口1,存储器为SendBuff,长度为:SEND_BUF_SIZE.
-	USART1->CR3=1<<7;           												//使能串口1的DMA发送 
-	MYDMA_Enable(DMA2_Stream7,SEND_BUF_SIZE);									//开始一次DMA传输！	
-		if(DMA2->HISR&(1<<27)) 													//等待 DMA2_Steam7 传输完成
-	{
-		DMA2->HIFCR|=1<<27; 													//清除 DMA2_Steam7 传输完成标志	
-	}
+	send_Image(Pic_Buff);
 	
 }
 
 
 void Image_Send_Dynamic(void){
-	int r;
-	int c;
+	
 	
 	
 	SendBuff[0] = x_circle;
 	SendBuff[1] = y_circle;
 	SendBuff[2] = r_circle;
 	SendBuff[3] = max;              
-	for(r = 0; r < HEIGHT; r++) 
-	{
-		for(c = 0; c < WIDTH; c++)
-		{
-			SendBuff[WIDTH * r+ c + 4] = Pic_Buff_Dup[r][c];
-		}
-	}
-	MYDMA_Config(DMA2_Stream7,4,(u32)&USART1->DR,(u32)SendBuff,SEND_BUF_SIZE);	//DMA2,STEAM7,CH4,外设为串口1,存储器为SendBuff,长度为:SEND_BUF_SIZE.
-	USART1->CR3=1<<7;           												//使能串口1的DMA发送 
-	MYDMA_Enable(DMA2_Stream7,SEND_BUF_SIZE);									//开始一次DMA传输！	
-		if(DMA2->HISR&(1<<27)) 													//等待 DMA2_Steam7 传输完成
-	{
-		DMA2->HIFCR|=1<<27; 													//清除 DMA2_Steam7 传输完成标志	
-	}
+	send_Image(Pic_Buff_Dup);
 	
 }
 
 
 void Image_Send_After_Static(void){
-	int r;
-	int c;
+
 	
 	
-	SendBuff[0] = 0;
-	SendBuff[1] = 0;
-	SendBuff[2] = 0;
+	SendBuff[0] = x_circle;
+	SendBuff[1] = y_circle;
+	SendBuff[2] = r_circle;
 	SendBuff[3] = max;              
-	for(r = 0; r < HEIGHT; r++) 
+	send_Image(Pic_Buff_Dup);
+	
+}
+
+void send_Image(u8 originPic[][80])
+{
+		int r;
+		int c;
+		for(r = 0; r < HEIGHT; r++) 
 	{
 		for(c = 0; c < WIDTH; c++)
 		{
-			SendBuff[WIDTH * r+ c + 4] = Pic_Buff_Dup[r][c];
+			SendBuff[WIDTH * r+ c + 4] = originPic[r][c];
 		}
 	}
 	MYDMA_Config(DMA2_Stream7,4,(u32)&USART1->DR,(u32)SendBuff,SEND_BUF_SIZE);	//DMA2,STEAM7,CH4,外设为串口1,存储器为SendBuff,长度为:SEND_BUF_SIZE.
@@ -595,7 +463,6 @@ void Image_Send_After_Static(void){
 	{
 		DMA2->HIFCR|=1<<27; 													//清除 DMA2_Steam7 传输完成标志	
 	}
-	
 }
 
 
@@ -607,61 +474,15 @@ void Image_Send_After_Static(void){
  */
 void Water_Level_Dynamic(void)
 {
-	
+	int i, j;
 	int pixel_count_sort[9]={0};
 	int pixel_max[3]={0};
-	int pixel_max_position[3] = {0};
-	int i,j,k;
+	int pixel_max_position[3] = {0};	
 	int key;
-	int level_sum=0,count=0,count_level=0;
 	int sum_white=0;
-	LED1=1;
 
-
-
-	for(j=0;j<WIDTH;j++)
-		{
-			for(i=0;i<HEIGHT;i++)
-			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7) && (abs(i-y_circle) < (r_circle/2)))
-				{					
-					level_sum++;
-				if(Pic_Buff_Dup[i][j] == 255)
-						{
-							sum_white++;
-						}
-				}				
-			}
-		}
-		level_sum = level_sum/9;	
-				
-		k=8;
-
-
-		for(j=0;j<WIDTH;j++)
-		{
-			for(i=0;i<HEIGHT;i++)
-			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7) && (abs(i-y_circle) < (r_circle/2)) )	
-					{
-						count++;
-						if(Pic_Buff_Dup[i][j] == 255)
-						{
-							count_level++;
-						}
-						if(count > level_sum)
-						{
-							count=1;
-							pixel_count[k] = count_level;
-							k--;
-							count_level=1;
-						}
-				}
-			}
-		}
+	water_Level_Helper();
 		
-		
-
 
 		for(i=0;i<9;i++)
 	{
@@ -720,14 +541,33 @@ void Water_Level_Dynamic(void)
 	
 }
 
-//在直方图均衡化的范围内截取一个类矩形，统计每层像素（仔细想有没有必要） ：计算最高层是第几层
+//在直方图均衡化的范围内截取一个类矩形，统计每层像素 ：计算最高层是第几层
 void Water_Level_Static(void)
+{
+	int i;
+		
+	water_Level_Helper();
+		
+	for(i=0;i<9;i++)
+	{
+
+			if(pixel_count[i] > 20)
+			{
+				max = i;
+			}
+			
+	}
+	
+
+}
+
+//统计每层的像素记录在数组pixel_count中
+void water_Level_Helper()
 {
 	int i,j,k;
 	int level_sum=0,count=0,count_level=0;
 	
 	
-		//动态检测
 	
 	//每层像素
 		for(j=0;j<WIDTH;j++)
@@ -766,21 +606,6 @@ void Water_Level_Static(void)
 				}
 			}
 		}
-		
-	
-	
-	
-	for(i=0;i<9;i++)
-	{
-
-			if(pixel_count[i] > 20)
-			{
-				max = i;
-			}
-			
-	}
-	
-
 }
 
 

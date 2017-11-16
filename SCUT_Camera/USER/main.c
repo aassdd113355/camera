@@ -33,16 +33,16 @@ int main(void)
 				
 				CAMERA_Image_Cut_Compress_6080(0,0);//	获取一帧图片，并且存在数组       2017-07-13 By BachMan	
 		
-//				if(flag_onlyone == 1){					//确定杯口
-//						Image_Sobel();												
-//						Hough();
+				if(flag_onlyone == 1){					//确定杯口
+						Image_Sobel();												
+						Hough();
 //						Image_Send();
-//					flag_onlyone--;
-//			}
+					flag_onlyone--;
+			}
 					
 				Image_Histeq();
 				Sobel_After();
-//				Water_Level_Static();
+				Water_Level_Static();
 				Image_Send_After_Static();			
 //				
 //				while(max>=0 && max<=6)

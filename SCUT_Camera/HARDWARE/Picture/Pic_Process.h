@@ -41,5 +41,7 @@ void Water_Level_Static(void);
 void findCenter(void);
 int creatYuzhi(float x);
 int creatYuzhi_After(float, int);
+void water_Level_Helper(void);
+void send_Image(u8 originPic[][80]);
 #endif
 
