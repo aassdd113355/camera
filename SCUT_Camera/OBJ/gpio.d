@@ -1,0 +1,12 @@
+..\obj\gpio.o: gpio.c
+..\obj\gpio.o: led.h
+..\obj\gpio.o: ..\SYSTEM\sys\sys.h
+..\obj\gpio.o: ..\SYSTEM\sys\stm32f4xx.h
+..\obj\gpio.o: ..\SYSTEM\sys\core_cm4.h
+..\obj\gpio.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\gpio.o: ..\SYSTEM\sys\core_cmInstr.h
+..\obj\gpio.o: ..\SYSTEM\sys\core_cmFunc.h
+..\obj\gpio.o: ..\SYSTEM\sys\core_cm4_simd.h
+..\obj\gpio.o: ..\SYSTEM\sys\system_stm32f4xx.h
+..\obj\gpio.o: stm32f4xx_gpio.h
+..\obj\gpio.o: stm32f4xx_rcc.h

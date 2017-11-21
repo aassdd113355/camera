@@ -1,14 +1,13 @@
 #include "sys.h"
 #include "delay.h"  
 #include "usart.h"  
-#include "led.h"
-#include "lcd.h"
 #include "ov7670.h"
 #include "timer.h"	  		 
 #include "sccb.h"	
 #include "exti.h"
 #include "Pic_Process.h"
 #include "dma.h"
+#include "led.h"
 
 void dynamic_check(void);
 extern u8 ov_sta;	//在exit.c里面定义
@@ -21,7 +20,7 @@ int flag_onlyone = 1;
 int main(void)
 {   
 	cameraSysInit();	//系统初始化
-
+	
  	while(1) 
 	{	
 
@@ -36,7 +35,7 @@ int main(void)
 				if(flag_onlyone == 1){					//确定杯口
 						Image_Sobel();												
 						Hough();
-//						Image_Send();
+						Image_Send();
 					flag_onlyone--;
 			}
 					
@@ -44,16 +43,17 @@ int main(void)
 				Sobel_After();
 				Water_Level_Static();
 				Image_Send_After_Static();			
-//				
+				
 //				while(max>=0 && max<=6)
 //				{
-//					//加水信号开
+//					On_Off = 0;//加水信号开
 //					dynamic_check();
 //				}
 	}					
 								
 	}
 	
+	while(1);
 }	
 	//动态检测 静态结束后
 void dynamic_check()
@@ -70,8 +70,8 @@ void dynamic_check()
 				Image_Send_Dynamic();
 				if(max > 6)
 				{
-					//关断加水信号
-					//延时1s左右
+					On_Off = 1;//开水//关断加水信号
+					delay_ms(3500);	//延时1s左右
 				}
 				
 	}

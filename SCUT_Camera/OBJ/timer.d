@@ -8,4 +8,3 @@
 ..\obj\timer.o: ..\SYSTEM\sys\core_cmFunc.h
 ..\obj\timer.o: ..\SYSTEM\sys\core_cm4_simd.h
 ..\obj\timer.o: ..\SYSTEM\sys\system_stm32f4xx.h
-..\obj\timer.o: ..\HARDWARE\LED\led.h

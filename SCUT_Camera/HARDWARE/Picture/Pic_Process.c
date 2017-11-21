@@ -7,8 +7,8 @@
 #include "math.h"
 #include "lcd.h"
 #include "String.h"
-#include "led.h"
 #include "delay.h"  
+#include "led.h"
 u8 Pic_Buff_Dup[HEIGHT][WIDTH];
 u8 Pic_Buff_Temp[HEIGHT][WIDTH];
 u8 Pic_Buff[HEIGHT][WIDTH]; 
@@ -33,12 +33,12 @@ void cameraSysInit()
 	uart_init(84,115200);		//初始化串口波特率为115200 
     OV7670_Init();
 	delay_ms(3500);	 
-	//LED_Init();
 	OV7670_Light_Mode(0);
 	//TIM3_Int_Init(9999,8399);			//10Khz计数频率,1秒钟中断	
 	EXTI9_Init();						//使能定时器捕获
 	OV7670_Window_Set(10,174,240,320);	//设置窗口	  
     OV7670_CS=0;
+	GpioInit();
 }
 
 
@@ -479,7 +479,7 @@ void Water_Level_Dynamic(void)
 	int pixel_max[3]={0};
 	int pixel_max_position[3] = {0};	
 	int key;
-	int sum_white=0;
+	//int sum_white=0;
 
 	water_Level_Helper();
 		
@@ -607,7 +607,4 @@ void water_Level_Helper()
 			}
 		}
 }
-
-
-
 

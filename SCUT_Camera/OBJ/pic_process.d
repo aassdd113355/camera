@@ -19,5 +19,5 @@
 ..\obj\pic_process.o: ..\HARDWARE\LCD\lcd.h
 ..\obj\pic_process.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\pic_process.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\String.h
-..\obj\pic_process.o: ..\HARDWARE\LED\led.h
 ..\obj\pic_process.o: ..\SYSTEM\delay\delay.h
+..\obj\pic_process.o: ..\USER\led.h
