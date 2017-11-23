@@ -17,8 +17,7 @@ u16 hough_space[HEIGHT][WIDTH][cntR]={0};
 int x_circle, y_circle, r_circle;
 float gray_density_array[256];      														 // 用于存放各个灰度级的密度（百分比）
 float gray_density_sum_array[256];   														 //用于存放各个灰度级的密度（百分比）的累加值   
-int max_level,max = -1;
-int flag1,flag2,flag;
+int max = -1;
 int pixel_count[9]={0};
 
 
@@ -39,6 +38,7 @@ void cameraSysInit()
 	OV7670_Window_Set(10,174,240,320);	//设置窗口	  
     OV7670_CS=0;
 	GpioInit();
+	
 }
 
 
@@ -127,7 +127,7 @@ void Image_Histeq(void)
 	{
 		for(c = 0; c < WIDTH; c++)
 		{
-			if((r-y_circle)*(r-y_circle) + (c-x_circle)*(c-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
+			if((r-y_circle)*(r-y_circle) + (c-x_circle)*(c-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
 				{
 					gray_array[Pic_Buff_Dup[r][c]] = gray_array[Pic_Buff_Dup[r][c]] + 1; 
 				}				
@@ -164,7 +164,7 @@ void Image_Histeq(void)
 	{
 		for(c = 0; c < WIDTH; c++)
 		{
-			if((r-y_circle)*(r-y_circle) + (c-x_circle)*(c-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
+			if((r-y_circle)*(r-y_circle) + (c-x_circle)*(c-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
 			{
 			Pic_Buff_Dup[r][c] = histEQU[Pic_Buff_Dup[r][c]];
 			}				
@@ -274,7 +274,7 @@ void Sobel_After(void)
 		{
 			
 			
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
@@ -284,7 +284,7 @@ void Sobel_After(void)
 		}
 	}
 	
-	yuzhi = creatYuzhi_After(0.10, count);
+	yuzhi = creatYuzhi_After(0.15, count);
 	
 		for(i = 1; i < HEIGHT - 1; i++) 
 	{
@@ -292,7 +292,7 @@ void Sobel_After(void)
 		{
 			
 			
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
 			{
 				if(Pic_Buff[i][j] > yuzhi){
 					Pic_Buff_Dup[i][j] = 255;
@@ -324,7 +324,7 @@ int creatYuzhi_After(float x, int num)
 	{
 		for(j = 1; j < WIDTH-1; j++)
 		{
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
 			{
 				sobel_gray_array[Pic_Buff_Dup[i][j]] = sobel_gray_array[Pic_Buff_Dup[i][j]] + 1; 
 			}
@@ -424,10 +424,10 @@ void Image_Send_Dynamic(void){
 	
 	
 	
-	SendBuff[0] = x_circle;
-	SendBuff[1] = y_circle;
-	SendBuff[2] = r_circle;
-	SendBuff[3] = max;              
+	SendBuff[0] = 0;
+	SendBuff[1] = 0;
+	SendBuff[2] = 0;
+	SendBuff[3] = max;
 	send_Image(Pic_Buff_Dup);
 	
 }
@@ -473,12 +473,13 @@ void send_Image(u8 originPic[][80])
  * 输出  ：无
  */
 void Water_Level_Dynamic(void)
-{
+{	int flag1,flag2;
 	int i, j;
 	int pixel_count_sort[9]={0};
 	int pixel_max[3]={0};
 	int pixel_max_position[3] = {0};	
 	int key;
+	int max_level=0;
 	//int sum_white=0;
 
 	water_Level_Helper();
@@ -532,7 +533,7 @@ void Water_Level_Dynamic(void)
 	{
 		max = max_level;
 	}else{
-		max = -1;
+		max = 0;
 	}
 	
 	flag2 = flag1;
@@ -543,8 +544,9 @@ void Water_Level_Dynamic(void)
 
 //在直方图均衡化的范围内截取一个类矩形，统计每层像素 ：计算最高层是第几层
 void Water_Level_Static(void)
-{
+{	int flag1,flag2;
 	int i;
+	int max_level=0;
 		
 	water_Level_Helper();
 		
@@ -553,17 +555,26 @@ void Water_Level_Static(void)
 
 			if(pixel_count[i] > 20)
 			{
-				max = i;
-			}
-			
+				max_level = i;
+			}			
 	}
+	
+	if(flag1 == max_level && flag2 == max_level)
+	{
+		max = max_level;
+	}else{
+		max = -1;
+	}
+	
+	flag2 = flag1;
+	flag1 = max_level;
 	
 
 }
 
 //统计每层的像素记录在数组pixel_count中
 void water_Level_Helper()
-{
+{	
 	int i,j,k;
 	int level_sum=0,count=0,count_level=0;
 	
@@ -574,7 +585,7 @@ void water_Level_Helper()
 		{
 			for(i=0;i<HEIGHT;i++)
 			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7) && (abs(i-y_circle) < (r_circle/2)))
+				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6) && (abs(i-y_circle) < (r_circle/2)))
 				{					
 					level_sum++;
 				}				
@@ -589,7 +600,7 @@ void water_Level_Helper()
 		{
 			for(i=0;i<HEIGHT;i++)
 			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7) && (abs(i-y_circle) < (r_circle/2)) )	
+				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6) && (abs(i-y_circle) < (r_circle/2)) )	
 					{
 						count++;
 						if(Pic_Buff_Dup[i][j] == 255)

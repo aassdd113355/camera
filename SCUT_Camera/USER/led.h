@@ -18,7 +18,7 @@
 
 //LED端口定义
 #define On_Off PDout(2)	// PD2 控制继电器开关
-//#define LED1 PFin(10)	// PD10 接受光电对管输入
+#define GlassArea PDin(3)	// PD3 接受光电对管输入 0时有物体
 
 void GpioInit(void);//初始化		 				    
 #endif

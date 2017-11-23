@@ -8,5 +8,4 @@
 ..\obj\gpio.o: ..\SYSTEM\sys\core_cmFunc.h
 ..\obj\gpio.o: ..\SYSTEM\sys\core_cm4_simd.h
 ..\obj\gpio.o: ..\SYSTEM\sys\system_stm32f4xx.h
-..\obj\gpio.o: stm32f4xx_gpio.h
-..\obj\gpio.o: stm32f4xx_rcc.h
+..\obj\gpio.o: ..\SYSTEM\delay\delay.h
