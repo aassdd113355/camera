@@ -11,3 +11,4 @@
 ..\obj\exti.o: ..\SYSTEM\delay\delay.h
 ..\obj\exti.o: ..\HARDWARE\OV7670\ov7670.h
 ..\obj\exti.o: ..\HARDWARE\OV7670\sccb.h
+..\obj\exti.o: ..\USER\led.h

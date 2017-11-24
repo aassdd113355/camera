@@ -24,17 +24,22 @@ void EXTI9_5_IRQHandler(void)
 	EXTI->PR=1<<9;     //清除LINE9上的中断标志位						  
 } 
 //0线中断服务函数
-void EXTI0_IRQHandler(void)
+void EXTI3_IRQHandler(void)
 {		 		
-	if(EXTI->PR&(1<<0))//是0线的中断
-	{     
-	
-			On_Off = 0; 
-
+		delay_ms(10); //消抖
+		if(GlassArea == 1)
+		{
+			On_Off = 0; 	//关
+		}else if(GlassArea == 0)
+		{
+			On_Off = 1; 	//开
+		}
 			
-	}
-	EXTI->PR=1<<0;     //清除LINE9上的中断标志位						  
+	
+	EXTI->PR=1<<3;     //清除LINE0上的中断标志位						  
 } 
+
+
 
 
 //外部中断9初始化
@@ -44,11 +49,12 @@ void EXTI9_Init(void)
 	MY_NVIC_Init(0,0,EXTI9_5_IRQn,2);		//抢占0,子优先级0，组2	   
 }
 
-void EXTI0_Init(void)	//外部中断初始化	
-{
-	Ex_NVIC_Config(GPIO_D,3,RTIR); 			//上升沿触发	
-	MY_NVIC_Init(0,0,EXTI0_IRQn,2);		//抢占0,子优先级0，组2	   
+void EXTIX_Init(void)	//外部中断初始化	
+{	
+	Ex_NVIC_Config(GPIO_D,3,0x03); 			//任意沿触发	
+	MY_NVIC_Init(0,0,EXTI3_IRQn,2);		//抢占1,子优先级0，组2	
 }
+
 
 
 

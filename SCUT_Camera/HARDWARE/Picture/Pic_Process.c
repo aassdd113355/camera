@@ -35,9 +35,11 @@ void cameraSysInit()
 	OV7670_Light_Mode(0);
 	//TIM3_Int_Init(9999,8399);			//10Khz计数频率,1秒钟中断	
 	EXTI9_Init();						//使能定时器捕获
-	OV7670_Window_Set(10,174,240,320);	//设置窗口	  
-    OV7670_CS=0;
 	GpioInit();
+	EXTIX_Init();
+//	OV7670_Window_Set(10,174,240,320);	//设置窗口	  
+//  OV7670_CS=0;
+
 	
 }
 

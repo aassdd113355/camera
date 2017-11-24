@@ -16,7 +16,7 @@
 
 
 void EXTI9_Init(void);
-void EXTIX_Init(void);	//外部中断初始化		 					    
+void EXTIX_Init(void);	//外部中断初始化	
 #endif
 
 

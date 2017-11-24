@@ -19,7 +19,7 @@ int flag_onlyone = 1;
 int main(void)
 {   
 	cameraSysInit();	//系统初始化
-	
+
 	
 // 	while(1) 
 //	{	

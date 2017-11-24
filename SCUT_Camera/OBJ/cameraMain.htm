@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\cameraMain.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\cameraMain.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu Nov 23 21:29:11 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Fri Nov 24 19:35:02 2017
 <BR><P>
 <H3>Maximum Stack Usage =         80 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -68,7 +68,7 @@ Function Pointers
  <LI><a href="#[34]">EXTI15_10_IRQHandler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
  <LI><a href="#[13]">EXTI1_IRQHandler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
  <LI><a href="#[14]">EXTI2_IRQHandler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
- <LI><a href="#[15]">EXTI3_IRQHandler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
+ <LI><a href="#[15]">EXTI3_IRQHandler</a> from exti.o(i.EXTI3_IRQHandler) referenced from startup_stm32f40_41xxx.o(RESET)
  <LI><a href="#[16]">EXTI4_IRQHandler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
  <LI><a href="#[23]">EXTI9_5_IRQHandler</a> from exti.o(i.EXTI9_5_IRQHandler) referenced from startup_stm32f40_41xxx.o(RESET)
  <LI><a href="#[10]">FLASH_IRQHandler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
@@ -433,9 +433,6 @@ Global Symbols
 <P><STRONG><a name="[14]"></a>EXTI2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f40_41xxx.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f40_41xxx.o(RESET)
 </UL>
-<P><STRONG><a name="[15]"></a>EXTI3_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f40_41xxx.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f40_41xxx.o(RESET)
-</UL>
 <P><STRONG><a name="[16]"></a>EXTI4_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f40_41xxx.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f40_41xxx.o(RESET)
 </UL>
@@ -611,26 +608,43 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[23]"></a>EXTI9_5_IRQHandler</STRONG> (Thumb, 78 bytes, Stack size 8 bytes, exti.o(i.EXTI9_5_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = EXTI9_5_IRQHandler
+<P><STRONG><a name="[15]"></a>EXTI3_IRQHandler</STRONG> (Thumb, 48 bytes, Stack size 8 bytes, exti.o(i.EXTI3_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = EXTI3_IRQHandler &rArr; delay_ms
 </UL>
-<BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f40_41xxx.o(RESET)
 </UL>
-<P><STRONG><a name="[75]"></a>EXTI9_Init</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, exti.o(i.EXTI9_Init))
+<P><STRONG><a name="[23]"></a>EXTI9_5_IRQHandler</STRONG> (Thumb, 78 bytes, Stack size 8 bytes, exti.o(i.EXTI9_5_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = EXTI9_5_IRQHandler
+</UL>
+<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f40_41xxx.o(RESET)
+</UL>
+<P><STRONG><a name="[76]"></a>EXTI9_Init</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, exti.o(i.EXTI9_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = EXTI9_Init &rArr; MY_NVIC_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MY_NVIC_Init
-<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Ex_NVIC_Config
+<BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MY_NVIC_Init
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Ex_NVIC_Config
 </UL>
 <BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cameraSysInit
 </UL>
 
-<P><STRONG><a name="[76]"></a>Ex_NVIC_Config</STRONG> (Thumb, 168 bytes, Stack size 20 bytes, sys.o(i.Ex_NVIC_Config))
+<P><STRONG><a name="[79]"></a>EXTIX_Init</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, exti.o(i.EXTIX_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = EXTIX_Init &rArr; MY_NVIC_Init
+</UL>
+<BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MY_NVIC_Init
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Ex_NVIC_Config
+</UL>
+<BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cameraSysInit
+</UL>
+
+<P><STRONG><a name="[77]"></a>Ex_NVIC_Config</STRONG> (Thumb, 168 bytes, Stack size 20 bytes, sys.o(i.Ex_NVIC_Config))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = Ex_NVIC_Config
 </UL>
-<BR>[Called By]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI9_Init
+<BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTIX_Init
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI9_Init
 </UL>
 
 <P><STRONG><a name="[8f]"></a>GPIO_AF_Set</STRONG> (Thumb, 64 bytes, Stack size 12 bytes, sys.o(i.GPIO_AF_Set))
@@ -639,94 +653,86 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 </UL>
 
-<P><STRONG><a name="[79]"></a>GPIO_Set</STRONG> (Thumb, 222 bytes, Stack size 32 bytes, sys.o(i.GPIO_Set))
+<P><STRONG><a name="[7b]"></a>GPIO_Set</STRONG> (Thumb, 222 bytes, Stack size 32 bytes, sys.o(i.GPIO_Set))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = GPIO_Set
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_Init
+<BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_Init
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
-<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GpioInit
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GpioInit
 </UL>
 
-<P><STRONG><a name="[78]"></a>GpioInit</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, gpio.o(i.GpioInit))
+<P><STRONG><a name="[7a]"></a>GpioInit</STRONG> (Thumb, 60 bytes, Stack size 16 bytes, gpio.o(i.GpioInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = GpioInit &rArr; GPIO_Set
 </UL>
-<BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Set
+<BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Set
 </UL>
 <BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cameraSysInit
 </UL>
 
-<P><STRONG><a name="[77]"></a>MY_NVIC_Init</STRONG> (Thumb, 116 bytes, Stack size 24 bytes, sys.o(i.MY_NVIC_Init))
+<P><STRONG><a name="[78]"></a>MY_NVIC_Init</STRONG> (Thumb, 116 bytes, Stack size 24 bytes, sys.o(i.MY_NVIC_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = MY_NVIC_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MY_NVIC_PriorityGroupConfig
+<BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MY_NVIC_PriorityGroupConfig
 </UL>
 <BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI9_Init
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTIX_Init
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI9_Init
 </UL>
 
-<P><STRONG><a name="[7a]"></a>MY_NVIC_PriorityGroupConfig</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, sys.o(i.MY_NVIC_PriorityGroupConfig))
-<BR><BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MY_NVIC_Init
+<P><STRONG><a name="[7c]"></a>MY_NVIC_PriorityGroupConfig</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, sys.o(i.MY_NVIC_PriorityGroupConfig))
+<BR><BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MY_NVIC_Init
 </UL>
 
 <P><STRONG><a name="[89]"></a>MY_NVIC_SetVectorTable</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, sys.o(i.MY_NVIC_SetVectorTable))
 <BR><BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Stm32_Clock_Init
 </UL>
 
-<P><STRONG><a name="[7b]"></a>OV7670_Init</STRONG> (Thumb, 312 bytes, Stack size 24 bytes, ov7670.o(i.OV7670_Init))
+<P><STRONG><a name="[7d]"></a>OV7670_Init</STRONG> (Thumb, 312 bytes, Stack size 24 bytes, ov7670.o(i.OV7670_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = OV7670_Init &rArr; SCCB_Init &rArr; GPIO_Set
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
-<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_Init
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Set
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
+<BR>[Calls]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
+<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_Init
+<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Set
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 </UL>
 <BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cameraSysInit
 </UL>
 
-<P><STRONG><a name="[80]"></a>OV7670_Light_Mode</STRONG> (Thumb, 92 bytes, Stack size 24 bytes, ov7670.o(i.OV7670_Light_Mode))
+<P><STRONG><a name="[81]"></a>OV7670_Light_Mode</STRONG> (Thumb, 92 bytes, Stack size 24 bytes, ov7670.o(i.OV7670_Light_Mode))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = OV7670_Light_Mode &rArr; SCCB_WR_Reg &rArr; SCCB_WR_Byte
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
+<BR>[Calls]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
 </UL>
 <BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cameraSysInit
 </UL>
 
-<P><STRONG><a name="[81]"></a>OV7670_Window_Set</STRONG> (Thumb, 138 bytes, Stack size 32 bytes, ov7670.o(i.OV7670_Window_Set))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = OV7670_Window_Set &rArr; SCCB_WR_Reg &rArr; SCCB_WR_Byte
-</UL>
-<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
-</UL>
-<BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cameraSysInit
-</UL>
-
-<P><STRONG><a name="[7c]"></a>SCCB_Init</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, sccb.o(i.SCCB_Init))
+<P><STRONG><a name="[7e]"></a>SCCB_Init</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, sccb.o(i.SCCB_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = SCCB_Init &rArr; GPIO_Set
 </UL>
-<BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Set
+<BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Set
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
+<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
 </UL>
 
 <P><STRONG><a name="[82]"></a>SCCB_No_Ack</STRONG> (Thumb, 56 bytes, Stack size 8 bytes, sccb.o(i.SCCB_No_Ack))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SCCB_No_Ack
 </UL>
-<BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
+<BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
 </UL>
 
 <P><STRONG><a name="[83]"></a>SCCB_RD_Byte</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, sccb.o(i.SCCB_RD_Byte))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = SCCB_RD_Byte
 </UL>
-<BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
+<BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
 </UL>
 
-<P><STRONG><a name="[7f]"></a>SCCB_RD_Reg</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, sccb.o(i.SCCB_RD_Reg))
+<P><STRONG><a name="[80]"></a>SCCB_RD_Reg</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, sccb.o(i.SCCB_RD_Reg))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = SCCB_RD_Reg &rArr; SCCB_WR_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Byte
@@ -734,50 +740,48 @@ Global Symbols
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_Start
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Byte
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_No_Ack
-<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Window_Set
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
+<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
 </UL>
 
 <P><STRONG><a name="[84]"></a>SCCB_Start</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, sccb.o(i.SCCB_Start))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SCCB_Start
 </UL>
-<BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
+<BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
 </UL>
 
 <P><STRONG><a name="[86]"></a>SCCB_Stop</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, sccb.o(i.SCCB_Stop))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SCCB_Stop
 </UL>
-<BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
+<BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
 </UL>
 
 <P><STRONG><a name="[85]"></a>SCCB_WR_Byte</STRONG> (Thumb, 154 bytes, Stack size 16 bytes, sccb.o(i.SCCB_WR_Byte))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = SCCB_WR_Byte
 </UL>
-<BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
+<BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
 </UL>
 
-<P><STRONG><a name="[7d]"></a>SCCB_WR_Reg</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, sccb.o(i.SCCB_WR_Reg))
+<P><STRONG><a name="[7f]"></a>SCCB_WR_Reg</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, sccb.o(i.SCCB_WR_Reg))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = SCCB_WR_Reg &rArr; SCCB_WR_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Byte
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_Stop
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_Start
-<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Window_Set
-<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Light_Mode
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
+<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Light_Mode
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
 </UL>
 
 <P><STRONG><a name="[87]"></a>Stm32_Clock_Init</STRONG> (Thumb, 90 bytes, Stack size 20 bytes, sys.o(i.Stm32_Clock_Init))
@@ -813,18 +817,18 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_exit_exit
 </UL>
 
-<P><STRONG><a name="[8b]"></a>cameraSysInit</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, pic_process.o(i.cameraSysInit))
+<P><STRONG><a name="[8b]"></a>cameraSysInit</STRONG> (Thumb, 64 bytes, Stack size 8 bytes, pic_process.o(i.cameraSysInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = cameraSysInit &rArr; uart_init &rArr; GPIO_Set
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 <LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_init
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Stm32_Clock_Init
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Window_Set
-<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Light_Mode
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
-<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GpioInit
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI9_Init
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Light_Mode
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GpioInit
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTIX_Init
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI9_Init
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 </UL>
 <BR>[Called By]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -833,28 +837,29 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cameraSysInit
 </UL>
 
-<P><STRONG><a name="[7e]"></a>delay_ms</STRONG> (Thumb, 56 bytes, Stack size 16 bytes, delay.o(i.delay_ms))
+<P><STRONG><a name="[74]"></a>delay_ms</STRONG> (Thumb, 56 bytes, Stack size 16 bytes, delay.o(i.delay_ms))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = delay_ms
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_xms
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
+<BR>[Called By]<UL><LI><a href="#[15]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI3_IRQHandler
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV7670_Init
 <LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cameraSysInit
 </UL>
 
-<P><STRONG><a name="[74]"></a>delay_us</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, delay.o(i.delay_us))
+<P><STRONG><a name="[75]"></a>delay_us</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, delay.o(i.delay_us))
 <BR><BR>[Called By]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI9_5_IRQHandler
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Byte
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_Stop
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_Start
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Byte
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_No_Ack
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
+<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_WR_Reg
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SCCB_RD_Reg
 </UL>
 
 <P><STRONG><a name="[8e]"></a>delay_xms</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, delay.o(i.delay_xms))
-<BR><BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
+<BR><BR>[Called By]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 </UL>
 
 <P><STRONG><a name="[6b]"></a>main</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, main.o(i.main))
@@ -868,8 +873,8 @@ Global Symbols
 <P><STRONG><a name="[8d]"></a>uart_init</STRONG> (Thumb, 240 bytes, Stack size 40 bytes, usart.o(i.uart_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = uart_init &rArr; GPIO_Set
 </UL>
-<BR>[Calls]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MY_NVIC_Init
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Set
+<BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MY_NVIC_Init
+<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Set
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_AF_Set
 </UL>
 <BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cameraSysInit
