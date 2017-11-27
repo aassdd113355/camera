@@ -18,9 +18,9 @@ int x_circle, y_circle, r_circle;
 float gray_density_array[256];      														 // 用于存放各个灰度级的密度（百分比）
 float gray_density_sum_array[256];   														 //用于存放各个灰度级的密度（百分比）的累加值   
 int max = -1;
+int max_dynamic = -1;
 int pixel_count[9]={0};
-
-
+int static_flag1=-1,static_flag2=-1;
 
  /* 函数名：cameraSysInit
   *  描述  ：系统初始化
@@ -34,11 +34,12 @@ void cameraSysInit()
 	delay_ms(3500);	 
 	OV7670_Light_Mode(0);
 	//TIM3_Int_Init(9999,8399);			//10Khz计数频率,1秒钟中断	
-	EXTI9_Init();						//使能定时器捕获
+	OV7670_Window_Set(10,174,240,320);	//设置窗口	  
+	OV7670_CS=0;
 	GpioInit();
 	EXTIX_Init();
-//	OV7670_Window_Set(10,174,240,320);	//设置窗口	  
-//  OV7670_CS=0;
+	EXTI9_Init();						//使能定时器捕获
+
 
 	
 }
@@ -129,7 +130,7 @@ void Image_Histeq(void)
 	{
 		for(c = 0; c < WIDTH; c++)
 		{
-			if((r-y_circle)*(r-y_circle) + (c-x_circle)*(c-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
+			if((r-y_circle)*(r-y_circle) + (c-x_circle)*(c-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
 				{
 					gray_array[Pic_Buff_Dup[r][c]] = gray_array[Pic_Buff_Dup[r][c]] + 1; 
 				}				
@@ -166,7 +167,7 @@ void Image_Histeq(void)
 	{
 		for(c = 0; c < WIDTH; c++)
 		{
-			if((r-y_circle)*(r-y_circle) + (c-x_circle)*(c-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
+			if((r-y_circle)*(r-y_circle) + (c-x_circle)*(c-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
 			{
 			Pic_Buff_Dup[r][c] = histEQU[Pic_Buff_Dup[r][c]];
 			}				
@@ -264,8 +265,8 @@ int creatYuzhi(float x)
 void Sobel_After(void)
 {		int i,j;
 		u8 Gx,Gy;
-		int count=0;//统计区域像素个数
-		int yuzhi;
+//		int count=0;//统计区域像素个数
+//		int yuzhi;
 	
 		memcpy(Pic_Buff_Temp,Pic_Buff_Dup,HEIGHT*WIDTH*sizeof(u8));
 	
@@ -276,74 +277,79 @@ void Sobel_After(void)
 		{
 			
 			
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6)) //第二次边缘检测区域应比直方图均衡化更小一些
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-			count=count+1;
-			Pic_Buff_Dup[i][j] = Gy + Gx;
-			}
-		}
-	}
-	
-	yuzhi = creatYuzhi_After(0.15, count);
-	
-		for(i = 1; i < HEIGHT - 1; i++) 
-	{
-		for(j = 1; j < WIDTH - 1; j++)
-		{
-			
-			
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
-			{
-				if(Pic_Buff[i][j] > yuzhi){
-					Pic_Buff_Dup[i][j] = 255;
-				}else{
-					Pic_Buff_Dup[i][j] = 0;
+//			count=count+1;
+//			Pic_Buff_Dup[i][j] = Gy + Gx;
+			if(Gy + Gx > 150){
+				Pic_Buff_Dup[i][j] = 255;
+			}else{
+				Pic_Buff_Dup[i][j] = 0;
 			}
 			}
 		}
 	}
+	
+//	yuzhi = creatYuzhi_After(0.15, count);
+//	
+//		for(i = 1; i < HEIGHT - 1; i++) 
+//	{
+//		for(j = 1; j < WIDTH - 1; j++)
+//		{
+//			
+//			
+//			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
+//			{
+//				if(Pic_Buff[i][j] > yuzhi){
+//					Pic_Buff_Dup[i][j] = 255;
+//				}else{
+//					Pic_Buff_Dup[i][j] = 0;
+//			}
+//			}
+//		}
+//	}
 	
 	memset(Pic_Buff_Temp,0,HEIGHT*WIDTH*sizeof(u8));
 }
 
 
-//计算阈值 ,参数x 为百分比，参数num为区域内的像素数，  例如：0.03 为百分之三
-int creatYuzhi_After(float x, int num)
-{	u16 yuzhiIndex, yuzhuleiji;
-	int i,j,countTo255;
-	u16 sobel_gray_array[256];
-	
-	yuzhiIndex = num * x;
-	for(i = 0; i < 256; i++)    
-	{
-		sobel_gray_array[i] = 0;
-	}
-	
-	// 统计各灰度级的数量
-	for(i = 1; i < HEIGHT-1; i++) 
-	{
-		for(j = 1; j < WIDTH-1; j++)
-		{
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
-			{
-				sobel_gray_array[Pic_Buff_Dup[i][j]] = sobel_gray_array[Pic_Buff_Dup[i][j]] + 1; 
-			}
-		}
-	}	
-	
-	yuzhuleiji = 0;
-	countTo255 = 0;
-	for(i=255; yuzhuleiji<yuzhiIndex ; i--)
-	{
-		yuzhuleiji = yuzhuleiji + sobel_gray_array[i];
-		countTo255 = countTo255 + 1;
-	}
-	
-	
-	return (255 - countTo255);
-}
+////计算阈值 ,参数x 为百分比，参数num为区域内的像素数，  例如：0.03 为百分之三
+//int creatYuzhi_After(float x, int num)
+//{	u16 yuzhiIndex, yuzhuleiji;
+//	int i,j,countTo255;
+//	u16 sobel_gray_array[256];
+//	
+//	yuzhiIndex = num * x;
+//	for(i = 0; i < 256; i++)    
+//	{
+//		sobel_gray_array[i] = 0;
+//	}
+//	
+//	// 统计各灰度级的数量
+//	for(i = 1; i < HEIGHT-1; i++) 
+//	{
+//		for(j = 1; j < WIDTH-1; j++)
+//		{
+//			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
+//			{
+//				sobel_gray_array[Pic_Buff_Dup[i][j]] = sobel_gray_array[Pic_Buff_Dup[i][j]] + 1; 
+//			}
+//		}
+//	}	
+//	
+//	yuzhuleiji = 0;
+//	countTo255 = 0;
+//	for(i=255; yuzhuleiji<yuzhiIndex ; i--)
+//	{
+//		yuzhuleiji = yuzhuleiji + sobel_gray_array[i];
+//		countTo255 = countTo255 + 1;
+//	}
+//	
+//	
+//	return (255 - countTo255);
+//}
 
 
 /* 函数名：Hough
@@ -416,7 +422,7 @@ void Image_Send(void){
 	SendBuff[0] = x_circle;
 	SendBuff[1] = y_circle;
 	SendBuff[2] = r_circle;
-	
+
 	send_Image(Pic_Buff);
 	
 }
@@ -429,7 +435,7 @@ void Image_Send_Dynamic(void){
 	SendBuff[0] = 0;
 	SendBuff[1] = 0;
 	SendBuff[2] = 0;
-	SendBuff[3] = max;
+	SendBuff[3] = max_dynamic;
 	send_Image(Pic_Buff_Dup);
 	
 }
@@ -469,19 +475,19 @@ void send_Image(u8 originPic[][80])
 
 
 
-/* 函数名：Water_Level     动态水位检测：计算白色像素占总量的百分比
+/* 函数名：Water_Level     静态水位检测：计算白色像素占总量的百分比
  * 描述  ：统计图片水位像素个数，判断水位 2017.07.17 Lee
- * 输入  ：无
- * 输出  ：无
+ * 输入  ：
+ * 输出  ：液位稳定时输出液位（用flag1,flag2判断），否则输出-1，max表示
  */
-void Water_Level_Dynamic(void)
-{	int flag1,flag2;
+void Water_Level_Static(void)
+{	int max_level=0;
 	int i, j;
 	int pixel_count_sort[9]={0};
 	int pixel_max[3]={0};
 	int pixel_max_position[3] = {0};	
 	int key;
-	int max_level=0;
+	
 	//int sum_white=0;
 
 	water_Level_Helper();
@@ -489,7 +495,7 @@ void Water_Level_Dynamic(void)
 
 		for(i=0;i<9;i++)
 	{
-		if(pixel_count[i] < 15)                   //绿25
+		if(pixel_count[i] < 20)                   //绿25
 			{
 				pixel_count[i] = 0;
 			}
@@ -531,22 +537,25 @@ void Water_Level_Dynamic(void)
 		}
 	}
 	
-	if(flag1 == max_level && flag2 == max_level)
+		static_flag2 = static_flag1;																	//更新缓存液位
+		static_flag1 = max_level;
+	
+	if(static_flag1 == max_level && static_flag2 == max_level)											//判断输出最高液位
 	{
 		max = max_level;
 	}else{
-		max = 0;
+		max = -1;
 	}
 	
-	flag2 = flag1;
-	flag1 = max_level;
+
 	
 	
 }
 
 //在直方图均衡化的范围内截取一个类矩形，统计每层像素 ：计算最高层是第几层
-void Water_Level_Static(void)
-{	int flag1,flag2;
+void Water_Level_Dynamic(void)
+{	
+//	int flag1,flag2;
 	int i;
 	int max_level=0;
 		
@@ -555,21 +564,21 @@ void Water_Level_Static(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > 20)
+			if(pixel_count[i] > 30)
 			{
 				max_level = i;
 			}			
 	}
 	
-	if(flag1 == max_level && flag2 == max_level)
-	{
-		max = max_level;
-	}else{
-		max = -1;
-	}
-	
-	flag2 = flag1;
-	flag1 = max_level;
+//	if(flag1 == max_level && flag2 == max_level)
+//	{
+		max_dynamic = max_level;
+//	}else{
+//		max = -1;
+//	}
+//	
+//	flag2 = flag1;
+//	flag1 = max;
 	
 
 }

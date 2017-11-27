@@ -30,10 +30,11 @@ void EXTI3_IRQHandler(void)
 		if(GlassArea == 1)
 		{
 			On_Off = 0; 	//关
-		}else if(GlassArea == 0)
-		{
-			On_Off = 1; 	//开
 		}
+//		}else if(GlassArea == 0)
+//		{
+//			On_Off = 1; 	//开
+//		}
 			
 	
 	EXTI->PR=1<<3;     //清除LINE0上的中断标志位						  
