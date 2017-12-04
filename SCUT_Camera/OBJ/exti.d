@@ -12,3 +12,4 @@
 ..\obj\exti.o: ..\HARDWARE\OV7670\ov7670.h
 ..\obj\exti.o: ..\HARDWARE\OV7670\sccb.h
 ..\obj\exti.o: ..\USER\led.h
+..\obj\exti.o: ..\HARDWARE\Picture\Pic_Process.h

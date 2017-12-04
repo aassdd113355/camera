@@ -19,12 +19,6 @@ extern int max_dynamic;
 
 
 void cameraSysInit(void);
-void Image_Binaryzation(void);
-void Image_Filter(void);
-void Get_Black_Line(void);
-void Black_Line_handle(void);
-//void CAMERA_Get_Image(void);
-void CAMERA_Get_ImageCut(u16 x_pos, u16 y_pos);
 void Image_Histeq(void);
 void Image_Send(void);
 void Image_Sobel(void);
@@ -43,5 +37,7 @@ int creatYuzhi(float x);
 int creatYuzhi_After(float, int);
 void water_Level_Helper(void);
 void send_Image(u8 originPic[][80]);
+void findArea(void);
+void ignoreExit3(u8 en);
 #endif
 

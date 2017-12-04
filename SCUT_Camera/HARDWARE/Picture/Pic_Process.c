@@ -31,9 +31,9 @@ void cameraSysInit()
 	delay_init(168);			//延时初始化  
 	uart_init(84,115200);		//初始化串口波特率为115200 
     OV7670_Init();
-	delay_ms(3500);	 
+	delay_ms(1000);	 
 	OV7670_Light_Mode(0);
-	//TIM3_Int_Init(9999,8399);			//10Khz计数频率,1秒钟中断	
+	TIM3_Int_Init(49999,8399);			//10Khz计数频率,5秒钟中断	
 	OV7670_Window_Set(10,174,240,320);	//设置窗口	  
 	OV7670_CS=0;
 	GpioInit();
@@ -283,7 +283,7 @@ void Sobel_After(void)
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
 //			count=count+1;
 //			Pic_Buff_Dup[i][j] = Gy + Gx;
-			if(Gy + Gx > 150){
+			if(Gy + Gx > 100){
 				Pic_Buff_Dup[i][j] = 255;
 			}else{
 				Pic_Buff_Dup[i][j] = 0;
@@ -628,5 +628,26 @@ void water_Level_Helper()
 				}
 			}
 		}
+}
+
+//找到杯口,废弃
+void findArea()
+{
+//				if(GlassArea == 0 && LastGlassArea == 1)
+//				{
+////							CAMERA_Image_Cut_Compress_6080(0,0);
+////							Image_Send();
+////							flag_onlyone--;
+////							Image_Sobel();												
+////							Hough();	
+//					delay_ms(500);
+//				}
+}
+
+void ignoreExit3(u8 en)
+{
+	EXTI->PR=1<<3; //清除LINE3上的中断标志位
+	if(en)EXTI->IMR|=1<<3;//不屏蔽line3上的中断
+	else EXTI->IMR&=~(1<<3);//屏蔽line3上的中断
 }
 
