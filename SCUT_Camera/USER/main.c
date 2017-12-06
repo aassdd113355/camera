@@ -23,21 +23,19 @@ int main(void)
 
  	while(1) 
 	{		
-			while(!flag);    			//没检测杯口的时候阻塞在这里	
+		while(!flag);    			//没检测杯口的时候阻塞在这里	
+		
 		if(ov_sta>1)
 		{
 
 
-				CAMERA_Image_Cut_Compress_6080(0,0);//	获取一帧图片，并且存在数组       2017-07-13 By BachMan	
-		
-
-					
+				CAMERA_Image_Cut_Compress_6080(0,0);//	获取一帧图片，并且存在数组       2017-07-13 By BachMan			
 				Image_Histeq();
 				Sobel_After();
 				Water_Level_Static();
 				Image_Send_After_Static();			
 				
-				while(max>=0 && max<=6)
+				while(max>=0 && max<=6 && flag)
 				{
 					On_Off = 1 && !GlassArea;//加水信号开
 					dynamic_check();
@@ -55,8 +53,6 @@ void dynamic_check()
 		if(ov_sta>1)
 	{
 		
-		
-				
 				CAMERA_Image_Cut_Compress_6080(0,0);
 				Image_Histeq();
 				Sobel_After();
@@ -71,15 +67,3 @@ void dynamic_check()
 				
 	}
 }
-	
-	
-	
-
-	
-	
-
-
-
-
-
-

@@ -38,10 +38,7 @@ void cameraSysInit()
 	OV7670_CS=0;
 	GpioInit();
 	EXTIX_Init();
-	EXTI9_Init();						//使能定时器捕获
-
-
-	
+	EXTI9_Init();						//使能定时器捕获	
 }
 
 
@@ -630,19 +627,6 @@ void water_Level_Helper()
 		}
 }
 
-//找到杯口,废弃
-void findArea()
-{
-//				if(GlassArea == 0 && LastGlassArea == 1)
-//				{
-////							CAMERA_Image_Cut_Compress_6080(0,0);
-////							Image_Send();
-////							flag_onlyone--;
-////							Image_Sobel();												
-////							Hough();	
-//					delay_ms(500);
-//				}
-}
 
 void ignoreExit3(u8 en)
 {

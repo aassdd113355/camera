@@ -7,9 +7,5 @@ void GpioInit(void)
 	GPIO_Set(GPIOD,PIN2,GPIO_MODE_OUT,GPIO_OTYPE_PP,GPIO_SPEED_100M,GPIO_PUPD_PU); //PD2设置
 	GPIO_Set(GPIOD,PIN3,GPIO_MODE_IN,0,0,GPIO_PUPD_NONE); //PD3设置
 	On_Off=0;//LED0关闭
-//	//LED1=1;//LED1关闭
-//	delay_ms(3500);
-//	On_Off=1;//LED0开启
-//	delay_ms(3500);
-//	On_Off=0;//LED0开启
+
 }

@@ -34,8 +34,9 @@ void EXTI3_IRQHandler(void)
 		}
 		else
 		{		
-				//Image_Send();
-				TIM3->CR1|=0x01;	//使能定时器			
+				TIM3->CR1|=0x01;	//使能定时器	
+				delay_ms(20);		//清除第一次中断
+				TIM3->SR&=~(1<<0);	//清除中断标志位				
 		}
 			
 	
