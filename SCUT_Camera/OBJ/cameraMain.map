@@ -1240,21 +1240,21 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       240         16          0          4          0       2375   delay.o
-       328         12          0          0          0       1654   dma.o
+       240         16          0          4          0       2371   delay.o
+       328         12          0          0          0       1650   dma.o
        232         42          0         12          0       2257   exti.o
-        72         12          0          0          0        443   gpio.o
+        72         12          0          0          0        439   gpio.o
        196         34          0          0          0     232971   main.o
-       562         20        578          0          0       2764   ov7670.o
-      3520        296          0         28     126888      11644   pic_process.o
-       664         62          0          0          0       4533   sccb.o
+       562         20        578          0          0       2756   ov7670.o
+      3520        296          0         28     126888      11632   pic_process.o
+       664         62          0          0          0       4517   sccb.o
         68         24        392          0       1024        860   startup_stm32f40_41xxx.o
-      1030         64          0          0          0       6004   sys.o
-       188         26          0          0          0       1126   timer.o
-       294         20          0          0          0       1804   usart.o
+      1030         64          0          0          0       5992   sys.o
+       188         26          0          0          0       1122   timer.o
+       294         20          0          0          0       1796   usart.o
 
     ----------------------------------------------------------------------
-      7404        628       1004         44     127912     268435   Object Totals
+      7404        628       1004         44     127912     268363   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         10          0          2          0          0          0   (incl. Padding)
 
@@ -1331,8 +1331,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     13068       1100       1292         44     128012     265699   Grand Totals
-     13068       1100       1292         44     128012     265699   ELF Image Totals
+     13068       1100       1292         44     128012     265627   Grand Totals
+     13068       1100       1292         44     128012     265627   ELF Image Totals
      13068       1100       1292         44          0          0   ROM Totals
 
 ==============================================================================

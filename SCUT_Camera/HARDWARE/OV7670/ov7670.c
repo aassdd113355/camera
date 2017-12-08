@@ -269,29 +269,3 @@ void OV7670_Window_Set(u16 sx,u16 sy,u16 width,u16 height)
 	SCCB_WR_Reg(0X17,sy>>3);			//设置Href的start高8位
 	SCCB_WR_Reg(0X18,endy>>3);			//设置Href的end的高8位
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

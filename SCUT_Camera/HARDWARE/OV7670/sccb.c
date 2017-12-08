@@ -139,18 +139,3 @@ u8 SCCB_RD_Reg(u8 reg)
   	SCCB_Stop();
   	return val;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

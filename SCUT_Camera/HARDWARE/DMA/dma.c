@@ -69,30 +69,3 @@ void MYDMA_Enable(DMA_Stream_TypeDef *DMA_Streamx,u16 ndtr)
 	DMA_Streamx->NDTR=ndtr;		//DMA ´æ´¢Æ÷0µØÖ· 
 	DMA_Streamx->CR|=1<<0;		//¿ªÆôDMA´«Êä
 }	  
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

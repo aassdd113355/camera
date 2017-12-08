@@ -33,7 +33,7 @@ void cameraSysInit()
     OV7670_Init();
 	delay_ms(1000);	 
 	OV7670_Light_Mode(0);
-	TIM3_Int_Init(49999,8399);			//10Khz计数频率,5秒钟中断	
+	TIM3_Int_Init(49999,4399);			//10Khz计数频率,5秒钟中断	
 	OV7670_Window_Set(10,174,240,320);	//设置窗口	  
 	OV7670_CS=0;
 	GpioInit();
@@ -278,8 +278,6 @@ void Sobel_After(void)
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-//			count=count+1;
-//			Pic_Buff_Dup[i][j] = Gy + Gx;
 			if(Gy + Gx > 100){
 				Pic_Buff_Dup[i][j] = 255;
 			}else{
@@ -287,66 +285,9 @@ void Sobel_After(void)
 			}
 			}
 		}
-	}
-	
-//	yuzhi = creatYuzhi_After(0.15, count);
-//	
-//		for(i = 1; i < HEIGHT - 1; i++) 
-//	{
-//		for(j = 1; j < WIDTH - 1; j++)
-//		{
-//			
-//			
-//			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
-//			{
-//				if(Pic_Buff[i][j] > yuzhi){
-//					Pic_Buff_Dup[i][j] = 255;
-//				}else{
-//					Pic_Buff_Dup[i][j] = 0;
-//			}
-//			}
-//		}
-//	}
-	
+	}	
 	memset(Pic_Buff_Temp,0,HEIGHT*WIDTH*sizeof(u8));
 }
-
-
-////计算阈值 ,参数x 为百分比，参数num为区域内的像素数，  例如：0.03 为百分之三
-//int creatYuzhi_After(float x, int num)
-//{	u16 yuzhiIndex, yuzhuleiji;
-//	int i,j,countTo255;
-//	u16 sobel_gray_array[256];
-//	
-//	yuzhiIndex = num * x;
-//	for(i = 0; i < 256; i++)    
-//	{
-//		sobel_gray_array[i] = 0;
-//	}
-//	
-//	// 统计各灰度级的数量
-//	for(i = 1; i < HEIGHT-1; i++) 
-//	{
-//		for(j = 1; j < WIDTH-1; j++)
-//		{
-//			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/7)*(r_circle-r_circle/7))
-//			{
-//				sobel_gray_array[Pic_Buff_Dup[i][j]] = sobel_gray_array[Pic_Buff_Dup[i][j]] + 1; 
-//			}
-//		}
-//	}	
-//	
-//	yuzhuleiji = 0;
-//	countTo255 = 0;
-//	for(i=255; yuzhuleiji<yuzhiIndex ; i--)
-//	{
-//		yuzhuleiji = yuzhuleiji + sobel_gray_array[i];
-//		countTo255 = countTo255 + 1;
-//	}
-//	
-//	
-//	return (255 - countTo255);
-//}
 
 
 /* 函数名：Hough
@@ -561,7 +502,7 @@ void Water_Level_Dynamic(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > 30)
+			if(pixel_count[i] > 32)
 			{
 				max_level = i;
 			}			
