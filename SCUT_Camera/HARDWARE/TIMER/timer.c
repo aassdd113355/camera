@@ -1,8 +1,9 @@
 #include "timer.h"
 #include "Pic_Process.h"
 #include "delay.h" 
-extern int flag_onlyone;
+#include "led.h"
 extern int flag;
+extern u8 ThereIsACircle; //Pic_Process.c中定义
 
 //通用定时器3中断初始化
 //这里时钟选择为APB1的2倍，而APB1为42M
@@ -30,16 +31,21 @@ void TIM3_IRQHandler(void)
 	{
 		
 				
-				while(flag_onlyone == 1){					//确定杯口
-						if(ov_sta>1)
+																		//确定杯口
+					while(ThereIsACircle == 0 && GlassArea == 0)
 						{
-							CAMERA_Image_Cut_Compress_6080(0,0);
-							Image_Sobel();												
-							Hough();	
-							Image_Send();
-							flag_onlyone--;
+						if(ov_sta>1)
+							{
+								CAMERA_Image_Cut_Compress_6080(0,0);
+								Image_Send();			
+								Image_Sobel();
+												
+								Hough();	
+							}
 						}
-					}
+						
+						Image_Send();
+
 				flag = 1;
 				TIM3->CR1&=0x00;	//关闭定时器
 	}				   

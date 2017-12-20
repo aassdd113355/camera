@@ -5,13 +5,12 @@
 #include "Pic_Process.h"
 u8 ov_sta;
 int flag = 0; //标志是否已经进行了杯口检测
-int flag_onlyone = 1;
-
+extern u8 ThereIsACircle; //Pic_Process.c中定义
 
  //外部中断5~9服务程序，读取最新一帧的图像
 void EXTI9_5_IRQHandler(void)
 {		 		
-	if(EXTI->PR&(1<<9))//是9线的中断
+	if(EXTI->PR&(1<<9))			//是9线的中断
 	{     
 
 				OV7670_WRST=0;	 	//复位写指针	
@@ -19,6 +18,7 @@ void EXTI9_5_IRQHandler(void)
 				OV7670_WRST=1;	
 				OV7670_WREN=1;		//允许写入FIFO
 				ov_sta++;
+				delay_us(200);
 	}
 	EXTI->PR=1<<9;     //清除LINE9上的中断标志位						  
 } 
@@ -29,8 +29,8 @@ void EXTI3_IRQHandler(void)
 		if(GlassArea == 1)
 		{
 			flag = 0;
-			flag_onlyone = 1;
 			On_Off = 0; 	//关
+			ThereIsACircle = 0;
 		}
 		else
 		{		
@@ -38,8 +38,7 @@ void EXTI3_IRQHandler(void)
 				delay_ms(20);		//清除第一次中断
 				TIM3->SR&=~(1<<0);	//清除中断标志位				
 		}
-			
-	
+
 	EXTI->PR=1<<3;     //清除LINE3上的中断标志位						  
 } 
 

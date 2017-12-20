@@ -9,6 +9,7 @@
 #include "String.h"
 #include "delay.h"  
 #include "led.h"
+
 u8 Pic_Buff_Dup[HEIGHT][WIDTH];
 u8 Pic_Buff_Temp[HEIGHT][WIDTH];
 u8 Pic_Buff[HEIGHT][WIDTH]; 
@@ -21,6 +22,7 @@ int max = -1;
 int max_dynamic = -1;
 int pixel_count[9]={0};
 int static_flag1=-1,static_flag2=-1;
+u8 ThereIsACircle = 0;
 
  /* º¯ÊýÃû£ºcameraSysInit
   *  ÃèÊö  £ºÏµÍ³³õÊ¼»¯
@@ -30,15 +32,16 @@ void cameraSysInit()
 	Stm32_Clock_Init(336,8,2,7);//ÉèÖÃÊ±ÖÓ,168Mhz £¬ APB1 Îª 42Mhz£¬ APB2 Îª 84Mhz£¬ USB/SDIO/Ëæ»úÊý·¢ÉúÆ÷Ê±ÖÓÎª 48Mhz¡£
 	delay_init(168);			//ÑÓÊ±³õÊ¼»¯  
 	uart_init(84,115200);		//³õÊ¼»¯´®¿Ú²¨ÌØÂÊÎª115200 
-    OV7670_Init();
+  OV7670_Init();
 	delay_ms(1000);	 
 	OV7670_Light_Mode(0);
-	TIM3_Int_Init(49999,4399);			//10Khz¼ÆÊýÆµÂÊ,5ÃëÖÓÖÐ¶Ï	
 	OV7670_Window_Set(10,174,240,320);	//ÉèÖÃ´°¿Ú	  
 	OV7670_CS=0;
+	EXTI9_Init();						//Ê¹ÄÜ¶¨Ê±Æ÷²¶»ñ	
 	GpioInit();
 	EXTIX_Init();
-	EXTI9_Init();						//Ê¹ÄÜ¶¨Ê±Æ÷²¶»ñ	
+	TIM3_Int_Init(49999,2499);			//10Khz¼ÆÊýÆµÂÊ,5ÃëÖÓÖÐ¶Ï	
+
 }
 
 
@@ -55,6 +58,7 @@ void CAMERA_Image_Cut_Compress_6080(u16 x_pos, u16 y_pos)        // 2017-07-13 ²
 	unsigned char color;
 	u16 col, row;
 	u16 c_count = 0, r_count = 0;
+	__disable_irq();																			//¹ØÖÐ¶Ï
 
 		OV7670_RRST=0;																			//¿ªÊ¼¸´Î»¶ÁÖ¸Õë 
 		OV7670_RCK=0;
@@ -98,6 +102,7 @@ void CAMERA_Image_Cut_Compress_6080(u16 x_pos, u16 y_pos)        // 2017-07-13 ²
 		memcpy(Pic_Buff_Dup,Pic_Buff,HEIGHT*WIDTH*sizeof(u8));
 		EXTI->PR=1<<9;     	 																	//Çå³ýLINE9ÉÏµÄÖÐ¶Ï±êÖ¾Î»
 		ov_sta=0;					  														    //¿ªÊ¼ÏÂÒ»´Î²É¼¯
+		__enable_irq();																			//¿ªÖÐ¶Ï
 }
 
 
@@ -200,7 +205,7 @@ void Image_Sobel(void)
 		}
 	}
 	
-	 yuzhi = creatYuzhi(0.04);	//¼ÆËããÐÖµ
+	 yuzhi = creatYuzhi(0.06);	//¼ÆËããÐÖµ
 	
 		for(i = 1; i < HEIGHT - 1; i++) 
 	{
@@ -273,12 +278,11 @@ void Sobel_After(void)
 		for(j = 1; j < WIDTH - 1; j++)
 		{
 			
-			
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6)) //µÚ¶þ´Î±ßÔµ¼ì²âÇøÓòÓ¦±ÈÖ±·½Í¼¾ùºâ»¯¸üÐ¡Ò»Ð©
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/5)*(r_circle-r_circle/5)) //µÚ¶þ´Î±ßÔµ¼ì²âÇøÓòÓ¦±ÈÖ±·½Í¼¾ùºâ»¯¸üÐ¡Ò»Ð©
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-			if(Gy + Gx > 100){
+			if(Gy + Gx > 70){
 				Pic_Buff_Dup[i][j] = 255;
 			}else{
 				Pic_Buff_Dup[i][j] = 0;
@@ -300,7 +304,7 @@ void Hough()
 		int i,j,k,l,a,b;
 			double t = 0;
 			int max_value=0;
-		//	int x=0,y=0,r=0;
+			int tempI=0,tempJ=0,tempK=0;
 			
 			for(i = 0; i < HEIGHT; i++) 
 			{
@@ -337,11 +341,23 @@ void Hough()
 							x_circle = j;
 							y_circle = i;
 							r_circle = minR + k*stepR;
-							
+							tempI = i;
+							tempJ = j;
+							tempK = k;
 						}
 					}
 				}
 			}
+			
+			if(hough_space[tempI][tempJ][tempK] >= 0)
+			{
+				ThereIsACircle = 1;
+			}else
+			{
+				ThereIsACircle = 0;
+			}
+			
+
 
 			memset(hough_space,0,HEIGHT*WIDTH*cntR*sizeof(u16));
 	
@@ -404,10 +420,10 @@ void send_Image(u8 originPic[][80])
 	}
 	MYDMA_Config(DMA2_Stream7,4,(u32)&USART1->DR,(u32)SendBuff,SEND_BUF_SIZE);	//DMA2,STEAM7,CH4,ÍâÉèÎª´®¿Ú1,´æ´¢Æ÷ÎªSendBuff,³¤¶ÈÎª:SEND_BUF_SIZE.
 	USART1->CR3=1<<7;           												//Ê¹ÄÜ´®¿Ú1µÄDMA·¢ËÍ 
-	MYDMA_Enable(DMA2_Stream7,SEND_BUF_SIZE);									//¿ªÊ¼Ò»´ÎDMA´«Êä£¡	
-		if(DMA2->HISR&(1<<27)) 													//µÈ´ý DMA2_Steam7 ´«ÊäÍê³É
+	MYDMA_Enable(DMA2_Stream7,SEND_BUF_SIZE);						//¿ªÊ¼Ò»´ÎDMA´«Êä£¡	
+		if(DMA2->HISR&(1<<27)) 														//µÈ´ý DMA2_Steam7 ´«ÊäÍê³É
 	{
-		DMA2->HIFCR|=1<<27; 													//Çå³ý DMA2_Steam7 ´«ÊäÍê³É±êÖ¾	
+		DMA2->HIFCR|=1<<27; 															//Çå³ý DMA2_Steam7 ´«ÊäÍê³É±êÖ¾	
 	}
 }
 
@@ -433,7 +449,7 @@ void Water_Level_Static(void)
 
 		for(i=0;i<9;i++)
 	{
-		if(pixel_count[i] < 20)                   //ÂÌ25
+		if(pixel_count[i] < r_circle * r_circle * 0.01)                   //ÂÌ25
 			{
 				pixel_count[i] = 0;
 			}
@@ -502,7 +518,7 @@ void Water_Level_Dynamic(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > 32)
+			if(pixel_count[i] > r_circle * r_circle * 0.04)
 			{
 				max_level = i;
 			}			
@@ -534,7 +550,7 @@ void water_Level_Helper()
 		{
 			for(i=0;i<HEIGHT;i++)
 			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6) && (abs(i-y_circle) < (r_circle/2)))
+				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/5)*(r_circle-r_circle/5) && (abs(i-y_circle) < (r_circle/2)))
 				{					
 					level_sum++;
 				}				
@@ -549,7 +565,7 @@ void water_Level_Helper()
 		{
 			for(i=0;i<HEIGHT;i++)
 			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6) && (abs(i-y_circle) < (r_circle/2)) )	
+				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/5)*(r_circle-r_circle/5) && (abs(i-y_circle) < (r_circle/2)) )	
 					{
 						count++;
 						if(Pic_Buff_Dup[i][j] == 255)

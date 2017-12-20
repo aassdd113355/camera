@@ -23,9 +23,12 @@ int main(void)
 
  	while(1) 
 	{		
+		
+			
 		while(!flag);    			//没检测杯口的时候阻塞在这里	
 		
-		if(ov_sta>1)
+		while(ov_sta<=1);
+		if(ov_sta > 1)
 		{
 
 
@@ -35,9 +38,10 @@ int main(void)
 				Water_Level_Static();
 				Image_Send_After_Static();			
 				
-				while(max>=0 && max<=6 && flag)
+				while(max>=0 && max<5 && flag)
 				{
 					On_Off = 1 && !GlassArea;//加水信号开
+					while(ov_sta<=1);
 					dynamic_check();
 				}
 				
@@ -61,8 +65,8 @@ void dynamic_check()
 				if(max_dynamic > 6)
 				{
 					On_Off = 0;//关断加水信号
-					max = 7;	//连接动态静态检测
-					delay_ms(5000);	//延时1s左右
+					max = 6;	//连接动态静态检测
+					delay_ms(5000);	//延时10s左右
 				}
 				
 	}

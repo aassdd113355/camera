@@ -2,14 +2,14 @@
 ..\obj\main.o: ..\SYSTEM\sys\sys.h
 ..\obj\main.o: ..\SYSTEM\sys\stm32f4xx.h
 ..\obj\main.o: ..\SYSTEM\sys\core_cm4.h
-..\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\main.o: D:\MDK5.14\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\main.o: ..\SYSTEM\sys\core_cmInstr.h
 ..\obj\main.o: ..\SYSTEM\sys\core_cmFunc.h
 ..\obj\main.o: ..\SYSTEM\sys\core_cm4_simd.h
 ..\obj\main.o: ..\SYSTEM\sys\system_stm32f4xx.h
 ..\obj\main.o: ..\SYSTEM\delay\delay.h
 ..\obj\main.o: ..\SYSTEM\usart\usart.h
-..\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\main.o: D:\MDK5.14\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\main.o: ..\HARDWARE\OV7670\ov7670.h
 ..\obj\main.o: ..\HARDWARE\OV7670\sccb.h
 ..\obj\main.o: ..\HARDWARE\TIMER\timer.h

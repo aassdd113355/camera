@@ -7,8 +7,8 @@
 #define THRESHOLD 0x6a
 #define SEND_BUF_SIZE 4804
 #define PI 3.1415926
-#define maxR 30
-#define minR 20
+#define maxR 25
+#define minR 17
 #define stepR 1
 #define cntR (((maxR-minR)/stepR)+1)
 
@@ -16,7 +16,7 @@ extern u8 ov_sta;	//在exit.c里面定义
 extern u8 Pic_Buff[HEIGHT][WIDTH];//在pic_process.c 定义
 extern int max;
 extern int max_dynamic;
-
+extern u8 ThereIsACircle; //Pic_Process.c中定义
 
 void cameraSysInit(void);
 void Image_Histeq(void);
