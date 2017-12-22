@@ -4,7 +4,6 @@
 #include "led.h"
 #include "Pic_Process.h"
 u8 ov_sta;
-int flag = 0; //标志是否已经进行了杯口检测
 extern u8 ThereIsACircle; //Pic_Process.c中定义
 
  //外部中断5~9服务程序，读取最新一帧的图像
@@ -25,10 +24,10 @@ void EXTI9_5_IRQHandler(void)
  //3线中断服务函数
 void EXTI3_IRQHandler(void)
 {		
-		delay_ms(60);
+		delay_ms(100);
 		if(GlassArea == 1)
 		{
-			flag = 0;
+
 			On_Off = 0; 	//关
 			ThereIsACircle = 0;
 		}

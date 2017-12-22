@@ -37,16 +37,17 @@ void TIM3_IRQHandler(void)
 						if(ov_sta>1)
 							{
 								CAMERA_Image_Cut_Compress_6080(0,0);
-								Image_Send();			
+								//Image_Send();
 								Image_Sobel();
-												
-								Hough();	
+								Image_Send();				
+								Hough();
+								//Image_Send();
+								//HoughAfter();
 							}
 						}
 						
 						Image_Send();
 
-				flag = 1;
 				TIM3->CR1&=0x00;	//关闭定时器
 	}				   
 	TIM3->SR&=~(1<<0);//清除中断标志位 	    

@@ -12,6 +12,7 @@
 void dynamic_check(void);
 extern u8 ov_sta;	//在exit.c里面定义
 extern int flag;	//在exit.c里面定义
+extern u8 ThereIsACircle;
 
 //初始第一次进行静态检测；当静态检测出水位为-1时继续检测；检测出水位>6时继续检测；
 //当静态检测出水位在0-6的可加水的范围内时，开启动态检测和开水信号；
@@ -25,7 +26,7 @@ int main(void)
 	{		
 		
 			
-		while(!flag);    			//没检测杯口的时候阻塞在这里	
+		while(!ThereIsACircle);    			//没检测杯口的时候阻塞在这里	
 		
 		while(ov_sta<=1);
 		if(ov_sta > 1)
@@ -38,7 +39,7 @@ int main(void)
 				Water_Level_Static();
 				Image_Send_After_Static();			
 				
-				while(max>=0 && max<5 && flag)
+				while(max>=0 && max<5 && ThereIsACircle)
 				{
 					On_Off = 1 && !GlassArea;//加水信号开
 					while(ov_sta<=1);

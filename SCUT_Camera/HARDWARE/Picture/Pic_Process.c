@@ -14,7 +14,7 @@ u8 Pic_Buff_Dup[HEIGHT][WIDTH];
 u8 Pic_Buff_Temp[HEIGHT][WIDTH];
 u8 Pic_Buff[HEIGHT][WIDTH]; 
 u8 SendBuff[SEND_BUF_SIZE] = {0};
-u16 hough_space[HEIGHT][WIDTH][cntR]={0}; 
+u8 hough_space[HEIGHT][WIDTH][cntR]={0}; 
 int x_circle, y_circle, r_circle;
 float gray_density_array[256];      														 // 用于存放各个灰度级的密度（百分比）
 float gray_density_sum_array[256];   														 //用于存放各个灰度级的密度（百分比）的累加值   
@@ -40,7 +40,7 @@ void cameraSysInit()
 	EXTI9_Init();						//使能定时器捕获	
 	GpioInit();
 	EXTIX_Init();
-	TIM3_Int_Init(49999,2499);			//10Khz计数频率,5秒钟中断	
+	TIM3_Int_Init(49999,2999);			//10Khz计数频率,5秒钟中断	
 
 }
 
@@ -270,7 +270,7 @@ void Sobel_After(void)
 //		int count=0;//统计区域像素个数
 //		int yuzhi;
 	
-		memcpy(Pic_Buff_Temp,Pic_Buff_Dup,HEIGHT*WIDTH*sizeof(u8));
+	memcpy(Pic_Buff_Temp,Pic_Buff_Dup,HEIGHT*WIDTH*sizeof(u8));
 	
 
 	for(i = 1; i < HEIGHT - 1; i++) 
@@ -294,6 +294,7 @@ void Sobel_After(void)
 }
 
 
+
 /* 函数名：Hough
  * 描述  ：Hough变换找圆 2017.07.09 Lee
  * 输入  ：无
@@ -301,12 +302,114 @@ void Sobel_After(void)
  */
 void Hough()
 {	
-		int i,j,k,l,a,b;
-			double t = 0;
+			int i,j,k;
 			int max_value=0;
 			int tempI=0,tempJ=0,tempK=0;
 			
+			HoughHelper();
+			
 			for(i = 0; i < HEIGHT; i++) 
+			{
+				for(j = 0; j < WIDTH; j++)
+				{
+					for(k=cntR-1; k >= 0; k--)
+					{
+						if(hough_space[i][j][k] >= max_value)
+						{
+							max_value = hough_space[i][j][k];
+
+							tempI = i;
+							tempJ = j;
+							tempK = k;
+						}
+					}
+				}
+			}
+			
+			if(hough_space[tempI][tempJ][tempK] >= 13)
+			{
+							x_circle = tempJ;
+							y_circle = tempI;
+							r_circle = minR + tempK*stepR;
+							ThereIsACircle = 1;
+			}else
+			{
+				x_circle = 0;
+				y_circle = 0;
+				r_circle = 0;
+				ThereIsACircle = 0;
+			}
+			
+
+
+			memset(hough_space,0,HEIGHT*WIDTH*cntR*sizeof(u8));
+	
+}
+
+//第二次搜索圆，步长为1
+void HoughAfter()
+{
+			int i,j,k,l,a,b;
+			double t = 0;
+			int max_value=0;
+			for(i = 0; i < HEIGHT; i++) 
+			{
+				for(j = 0; j < WIDTH; j++)
+				{
+					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+2)*(r_circle+2) && (abs(i-y_circle) < (r_circle/2)))
+					{
+						if(Pic_Buff[i][j] == 255)
+						{
+							for(k = 0;k< (r_circle-minRAfter);k++)
+							{
+								for(l=0;l<361;l=l+10)
+									{
+									t = (l * PI) / 180;
+									a = i-(minRAfter+k)*cos(t);
+									b = j-(minRAfter+k)*sin(t);
+										if(a>0 && a<HEIGHT && b>0 && b<WIDTH)
+											{
+												hough_space[a][b][k]++;
+											}
+									}
+							}
+						}
+					}
+				}
+			}
+			
+			for(i = 0; i < HEIGHT; i++) 
+			{
+				for(j = 0; j < WIDTH; j++)
+				{
+					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+2)*(r_circle+2) && (abs(i-y_circle) < (r_circle/2)))
+					{
+					for(k=cntR-1; k >= 0; k--)
+					{
+						if(k>=minRAfter && k<(r_circle-minRAfter))
+						{
+						if(hough_space[i][j][k] >= max_value)
+						{
+							max_value = hough_space[i][j][k];
+							x_circle = j;
+							y_circle = i;
+							r_circle = minRAfter + k;
+						}
+						}
+					}
+				}
+				}
+			}
+			memset(hough_space,0,HEIGHT*WIDTH*cntR*sizeof(u8));
+			
+			
+}
+
+void HoughHelper()
+{				
+				int i,j,k,l,a,b;
+				double t = 0;
+				for(i = 0; i < HEIGHT; i++) 
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
@@ -328,40 +431,8 @@ void Hough()
 					}
 				}
 			}
-			
-			for(i = 0; i < HEIGHT; i++) 
-			{
-				for(j = 0; j < WIDTH; j++)
-				{
-					for(k=0; k < cntR; k++)
-					{
-						if(hough_space[i][j][k] >= max_value)
-						{
-							max_value = hough_space[i][j][k];
-							x_circle = j;
-							y_circle = i;
-							r_circle = minR + k*stepR;
-							tempI = i;
-							tempJ = j;
-							tempK = k;
-						}
-					}
-				}
-			}
-			
-			if(hough_space[tempI][tempJ][tempK] >= 0)
-			{
-				ThereIsACircle = 1;
-			}else
-			{
-				ThereIsACircle = 0;
-			}
-			
-
-
-			memset(hough_space,0,HEIGHT*WIDTH*cntR*sizeof(u16));
-	
 }
+
 
 
 /* 函数名：Image_Send
@@ -584,11 +655,4 @@ void water_Level_Helper()
 		}
 }
 
-
-void ignoreExit3(u8 en)
-{
-	EXTI->PR=1<<3; //清除LINE3上的中断标志位
-	if(en)EXTI->IMR|=1<<3;//不屏蔽line3上的中断
-	else EXTI->IMR&=~(1<<3);//屏蔽line3上的中断
-}
 
