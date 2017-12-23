@@ -19,7 +19,7 @@ I (..\HARDWARE\EXTI\exti.h)(0x5A2BA0F4)
 I (..\HARDWARE\Picture\Pic_Process.h)(0x5A3CB54B)
 I (..\HARDWARE\DMA\dma.h)(0x5A2BA0F4)
 I (led.h)(0x5A2BA0F4)
-F (..\HARDWARE\Picture\Pic_Process.c)(0x5A3CC5B9)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\HARDWARE\EXTI -I..\HARDWARE\WDG -I..\HARDWARE\TIMER -I..\HARDWARE\TPAD -I..\HARDWARE\OLED -I..\HARDWARE\LCD -I..\HARDWARE\OV7670 -I..\HARDWARE\Picture -I..\HARDWARE\DMA -I..\USER-I C:\Users\Lee\Desktop\SCUT_Camera\USER\RTE-I D:\MDK5.14\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I D:\MDK5.14\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx-o ..\obj\pic_process.o --omf_browse ..\obj\pic_process.crf --depend ..\obj\pic_process.d)
+F (..\HARDWARE\Picture\Pic_Process.c)(0x5A3CCB25)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\HARDWARE\EXTI -I..\HARDWARE\WDG -I..\HARDWARE\TIMER -I..\HARDWARE\TPAD -I..\HARDWARE\OLED -I..\HARDWARE\LCD -I..\HARDWARE\OV7670 -I..\HARDWARE\Picture -I..\HARDWARE\DMA -I..\USER-I C:\Users\Lee\Desktop\SCUT_Camera\USER\RTE-I D:\MDK5.14\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I D:\MDK5.14\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx-o ..\obj\pic_process.o --omf_browse ..\obj\pic_process.crf --depend ..\obj\pic_process.d)
 I (..\HARDWARE\Picture\Pic_Process.h)(0x5A3CB54B)
 I (..\SYSTEM\sys\sys.h)(0x5A2BA0F4)
 I (..\SYSTEM\sys\stm32f4xx.h)(0x5A2BA0F4)

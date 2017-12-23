@@ -520,7 +520,7 @@ void Water_Level_Static(void)
 
 		for(i=0;i<9;i++)
 	{
-		if(pixel_count[i] < r_circle * r_circle * 0.01)                   //бл25
+		if(pixel_count[i] < r_circle * r_circle * 0.05)                   //бл25
 			{
 				pixel_count[i] = 0;
 			}
@@ -589,7 +589,7 @@ void Water_Level_Dynamic(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > r_circle * r_circle * 0.04)
+			if(pixel_count[i] > r_circle * r_circle * 0.1)
 			{
 				max_level = i;
 			}			
