@@ -1347,18 +1347,18 @@
       <ActiveTab>3</ActiveTab>
       <Doc>
         <Name>..\HARDWARE\Picture\Pic_Process.h</Name>
-        <ColumnNumber>15</ColumnNumber>
-        <TopLine>2</TopLine>
-        <CurrentLine>11</CurrentLine>
+        <ColumnNumber>0</ColumnNumber>
+        <TopLine>8</TopLine>
+        <CurrentLine>14</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
         <Name>..\HARDWARE\TIMER\timer.c</Name>
-        <ColumnNumber>0</ColumnNumber>
+        <ColumnNumber>26</ColumnNumber>
         <TopLine>24</TopLine>
-        <CurrentLine>50</CurrentLine>
+        <CurrentLine>45</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
@@ -1374,9 +1374,9 @@
       </Doc>
       <Doc>
         <Name>..\HARDWARE\Picture\Pic_Process.c</Name>
-        <ColumnNumber>50</ColumnNumber>
-        <TopLine>516</TopLine>
-        <CurrentLine>523</CurrentLine>
+        <ColumnNumber>94</ColumnNumber>
+        <TopLine>353</TopLine>
+        <CurrentLine>360</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
@@ -1392,18 +1392,18 @@
       </Doc>
       <Doc>
         <Name>.\main.c</Name>
-        <ColumnNumber>26</ColumnNumber>
-        <TopLine>23</TopLine>
-        <CurrentLine>39</CurrentLine>
+        <ColumnNumber>2</ColumnNumber>
+        <TopLine>13</TopLine>
+        <CurrentLine>36</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
         <Name>..\HARDWARE\EXTI\exti.c</Name>
-        <ColumnNumber>17</ColumnNumber>
-        <TopLine>8</TopLine>
-        <CurrentLine>27</CurrentLine>
+        <ColumnNumber>0</ColumnNumber>
+        <TopLine>10</TopLine>
+        <CurrentLine>28</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>

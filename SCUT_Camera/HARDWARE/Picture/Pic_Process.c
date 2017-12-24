@@ -348,7 +348,8 @@ void Hough()
 
 //第二次搜索圆，步长为1
 void HoughAfter()
-{
+{			
+			int tempI=0,tempJ=0,tempK=0;
 			int i,j,k,l,a,b;
 			double t = 0;
 			int max_value=0;
@@ -356,17 +357,17 @@ void HoughAfter()
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+2)*(r_circle+2) && (abs(i-y_circle) < (r_circle/2)))
+					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+3)*(r_circle+3) && (abs(i-y_circle) < (r_circle/2)))
 					{
 						if(Pic_Buff[i][j] == 255)
 						{
-							for(k = 0;k< (r_circle-minRAfter);k++)
+							for(k = 0;k< 10;k++)
 							{
 								for(l=0;l<361;l=l+10)
 									{
 									t = (l * PI) / 180;
-									a = i-(minRAfter+k)*cos(t);
-									b = j-(minRAfter+k)*sin(t);
+									a = i-(r_circle-9+k)*cos(t);
+									b = j-(r_circle-9+k)*sin(t);
 										if(a>0 && a<HEIGHT && b>0 && b<WIDTH)
 											{
 												hough_space[a][b][k]++;
@@ -382,25 +383,27 @@ void HoughAfter()
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+2)*(r_circle+2) && (abs(i-y_circle) < (r_circle/2)))
+					if(((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+3)*(r_circle+3)) && (abs(i-y_circle) < (r_circle/2)))
 					{
-					for(k=cntR-1; k >= 0; k--)
-					{
-						if(k>=minRAfter && k<(r_circle-minRAfter))
+						for(k=9; k >= 0; k--)
 						{
-						if(hough_space[i][j][k] >= max_value)
-						{
-							max_value = hough_space[i][j][k];
-							x_circle = j;
-							y_circle = i;
-							r_circle = minRAfter + k;
-						}
+							if(hough_space[i][j][k] >= max_value)
+							{
+								max_value = hough_space[i][j][k];
+								tempJ = j;
+								tempI = i;
+								tempK = k;
+							}	
 						}
 					}
 				}
-				}
 			}
-			memset(hough_space,0,HEIGHT*WIDTH*cntR*sizeof(u8));
+			
+							x_circle = tempJ;
+							y_circle = tempI;
+							r_circle = r_circle - 9 + tempK;
+			
+			memset(hough_space,0,HEIGHT*WIDTH*10*sizeof(u8));
 			
 			
 }
@@ -636,7 +639,7 @@ void water_Level_Helper()
 		{
 			for(i=0;i<HEIGHT;i++)
 			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/5)*(r_circle-r_circle/5) && (abs(i-y_circle) < (r_circle/2)) )	
+				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/5)*(r_circle-r_circle/5) && (abs(j-x_circle) < (r_circle/2)) )	
 					{
 						count++;
 						if(Pic_Buff_Dup[i][j] == 255)

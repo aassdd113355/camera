@@ -39,10 +39,10 @@ void TIM3_IRQHandler(void)
 								CAMERA_Image_Cut_Compress_6080(0,0);
 								//Image_Send();
 								Image_Sobel();
-								Image_Send();				
+								//Image_Send();				
 								Hough();
-								//Image_Send();
-								//HoughAfter();
+								Image_Send();
+								HoughAfter();
 							}
 						}
 						
