@@ -205,7 +205,7 @@ void Image_Sobel(void)
 		}
 	}
 	
-	 yuzhi = creatYuzhi(0.06);	//计算阈值
+	 yuzhi = creatYuzhi(0.05);	//计算阈值
 	
 		for(i = 1; i < HEIGHT - 1; i++) 
 	{
@@ -282,7 +282,7 @@ void Sobel_After(void)
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-			if(Gy + Gx > 70){
+			if(Gy + Gx > 0.15 * 225){
 				Pic_Buff_Dup[i][j] = 255;
 			}else{
 				Pic_Buff_Dup[i][j] = 0;
@@ -314,7 +314,7 @@ void Hough()
 				{
 					for(k=cntR-1; k >= 0; k--)
 					{
-						if(hough_space[i][j][k] >= max_value)
+						if(hough_space[i][j][k] > max_value)
 						{
 							max_value = hough_space[i][j][k];
 
@@ -326,7 +326,7 @@ void Hough()
 				}
 			}
 			
-			if(hough_space[tempI][tempJ][tempK] >= 13)
+			if(hough_space[tempI][tempJ][tempK] >= 10)
 			{
 							x_circle = tempJ;
 							y_circle = tempI;
@@ -357,13 +357,13 @@ void HoughAfter()
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+3)*(r_circle+3) && (abs(i-y_circle) < (r_circle/2)))
+					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+3)*(r_circle+3) && (abs(i-y_circle) < ((r_circle+3)/5 * 3)))
 					{
 						if(Pic_Buff[i][j] == 255)
 						{
 							for(k = 0;k< 10;k++)
 							{
-								for(l=0;l<361;l=l+10)
+								for(l=0;l<361;l=l+5)
 									{
 									t = (l * PI) / 180;
 									a = i-(r_circle-9+k)*cos(t);
@@ -378,16 +378,16 @@ void HoughAfter()
 					}
 				}
 			}
-			
+			for(k=9; k >= 0; k--)
+			{
 			for(i = 0; i < HEIGHT; i++) 
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if(((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+3)*(r_circle+3)) && (abs(i-y_circle) < (r_circle/2)))
+					if(((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle)*(r_circle)) && (abs(i-y_circle) < (r_circle/4)))
 					{
-						for(k=9; k >= 0; k--)
-						{
-							if(hough_space[i][j][k] >= max_value)
+
+							if(hough_space[i][j][k] > max_value)
 							{
 								max_value = hough_space[i][j][k];
 								tempJ = j;
@@ -523,7 +523,7 @@ void Water_Level_Static(void)
 
 		for(i=0;i<9;i++)
 	{
-		if(pixel_count[i] < r_circle * r_circle * 0.05)                   //绿25
+		if(pixel_count[i] < r_circle * r_circle * 0.06)                   //绿25
 			{
 				pixel_count[i] = 0;
 			}
@@ -592,7 +592,7 @@ void Water_Level_Dynamic(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > r_circle * r_circle * 0.1)
+			if(pixel_count[i] > r_circle * r_circle * 0.07)
 			{
 				max_level = i;
 			}			
@@ -624,7 +624,7 @@ void water_Level_Helper()
 		{
 			for(i=0;i<HEIGHT;i++)
 			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/5)*(r_circle-r_circle/5) && (abs(i-y_circle) < (r_circle/2)))
+				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4) && (abs(i-y_circle) < (r_circle*2/3)))
 				{					
 					level_sum++;
 				}				

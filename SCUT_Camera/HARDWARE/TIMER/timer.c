@@ -42,10 +42,10 @@ void TIM3_IRQHandler(void)
 								//Image_Send();				
 								Hough();
 								Image_Send();
-								HoughAfter();
+								
 							}
 						}
-						
+						HoughAfter();
 						Image_Send();
 
 				TIM3->CR1&=0x00;	//¹Ø±Õ¶¨Ê±Æ÷
