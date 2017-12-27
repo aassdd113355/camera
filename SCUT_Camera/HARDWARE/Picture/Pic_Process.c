@@ -15,14 +15,15 @@ u8 Pic_Buff_Temp[HEIGHT][WIDTH];
 u8 Pic_Buff[HEIGHT][WIDTH]; 
 u8 SendBuff[SEND_BUF_SIZE] = {0};
 u8 hough_space[HEIGHT][WIDTH][cntR]={0}; 
-int x_circle, y_circle, r_circle;
+volatile int x_circle=2, y_circle=2, r_circle=2;
 float gray_density_array[256];      														 // 用于存放各个灰度级的密度（百分比）
 float gray_density_sum_array[256];   														 //用于存放各个灰度级的密度（百分比）的累加值   
 int max = -1;
 int max_dynamic = -1;
 int pixel_count[9]={0};
 int static_flag1=-1,static_flag2=-1;
-u8 ThereIsACircle = 0;
+volatile u8 ThereIsACircle = 0; 
+
 
  /* 函数名：cameraSysInit
   *  描述  ：系统初始化
@@ -40,7 +41,7 @@ void cameraSysInit()
 	EXTI9_Init();						//使能定时器捕获	
 	GpioInit();
 	EXTIX_Init();
-	TIM3_Int_Init(49999,3500);			//10Khz计数频率,5秒钟中断	
+	TIM3_Int_Init(49999,4000);			//10Khz计数频率,5秒钟中断	
 
 }
 
@@ -205,7 +206,7 @@ void Image_Sobel(void)
 		}
 	}
 	
-	 yuzhi = creatYuzhi(0.05);	//计算阈值
+	 yuzhi = creatYuzhi(0.06);	//计算阈值
 	
 		for(i = 1; i < HEIGHT - 1; i++) 
 	{
@@ -282,7 +283,7 @@ void Sobel_After(void)
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-			if(Gy + Gx > 0.16 * 225){
+			if(Gy + Gx > 32){
 				Pic_Buff_Dup[i][j] = 255;
 			}else{
 				Pic_Buff_Dup[i][j] = 0;
@@ -305,7 +306,7 @@ void Hough()
 			int i,j,k;
 			int max_value=0;
 			int tempI=0,tempJ=0,tempK=0;
-			
+			__disable_irq();																			//关中断
 			HoughHelper();
 			
 			for(i = 0; i < HEIGHT; i++) 
@@ -343,41 +344,17 @@ void Hough()
 
 
 			memset(hough_space,0,HEIGHT*WIDTH*cntR*sizeof(u8));
-	
+			__enable_irq();																			//开中断
 }
 
 //第二次搜索圆，步长为1
 void HoughAfter()
 {			
-			int tempI=0,tempJ=0,tempK=0;
-			int i,j,k,l,a,b;
-			double t = 0;
+			int tempI=0,tempJ=0,tempK=0, tempR = r_circle;
+			int i,j,k;
 			int max_value=0;
-			for(i = 0; i < HEIGHT; i++) 
-			{
-				for(j = 0; j < WIDTH; j++)
-				{
-					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+5)*(r_circle+5) && (abs(i-y_circle) < ((r_circle+5)/5 * 3)))
-					{
-						if(Pic_Buff[i][j] == 255)
-						{
-							for(k = 0;k< 10;k++)
-							{
-								for(l=0;l<361;l=l+10)
-									{
-									t = (l * PI) / 180;
-									a = i-(r_circle-9+k)*cos(t);
-									b = j-(r_circle-9+k)*sin(t);
-										if(a>0 && a<HEIGHT && b>0 && b<WIDTH)
-											{
-												hough_space[a][b][k]++;
-											}
-									}
-							}
-						}
-					}
-				}
-			}
+			__disable_irq();																			//关中断
+			HoughAfterHelper();
 			for(k=9; k >= 0; k--)
 			{
 			for(i = 0; i < HEIGHT; i++) 
@@ -401,11 +378,42 @@ void HoughAfter()
 			
 							x_circle = tempJ;
 							y_circle = tempI;
-							r_circle = r_circle - 9 + tempK;
+							r_circle = tempR - 9 + tempK;
 			
-			memset(hough_space,0,HEIGHT*WIDTH*10*sizeof(u8));
+			memset(hough_space,0,HEIGHT*WIDTH*cntR*sizeof(u8));
+			__enable_irq();																			//开中断
 			
-			
+}
+
+void HoughAfterHelper()
+{
+		int i,j,k,l,a,b;
+		double t = 0;
+				for(i = 0; i < HEIGHT; i++) 
+			{
+				for(j = 0; j < WIDTH; j++)
+				{
+					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+5)*(r_circle+5) && (abs(i-y_circle) < ((r_circle+5)/2)))
+					{
+						if(Pic_Buff[i][j] == 255)
+						{
+							for(k = 0;k< 10;k++)
+							{
+								for(l=0;l<361;l=l+10)
+									{
+									t = (l * PI) / 180;
+									a = i-(r_circle-9+k)*cos(t);
+									b = j-(r_circle-9+k)*sin(t);
+										if(a>0 && a<HEIGHT && b>0 && b<WIDTH)
+											{
+												hough_space[a][b][k]++;
+											}
+									}
+							}
+						}
+					}
+				}
+			}
 }
 
 void HoughHelper()
@@ -592,7 +600,7 @@ void Water_Level_Dynamic(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > r_circle * r_circle * 0.08)
+			if(pixel_count[i] > r_circle * r_circle * 0.06)
 			{
 				max_level = i;
 			}			

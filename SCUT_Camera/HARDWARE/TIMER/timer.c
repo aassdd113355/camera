@@ -3,7 +3,7 @@
 #include "delay.h" 
 #include "led.h"
 extern int flag;
-extern u8 ThereIsACircle; //Pic_Process.c中定义
+extern volatile u8 ThereIsACircle; //Pic_Process.c中定义
 
 //通用定时器3中断初始化
 //这里时钟选择为APB1的2倍，而APB1为42M
@@ -42,7 +42,7 @@ void TIM3_IRQHandler(void)
 								//Image_Send();				
 								Hough();
 								Image_Send();
-								
+								delay_ms(5000);
 							}
 						}
 						HoughAfter();

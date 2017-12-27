@@ -17,7 +17,7 @@ extern u8 ov_sta;	//在exit.c里面定义
 extern u8 Pic_Buff[HEIGHT][WIDTH];//在pic_process.c 定义
 extern int max;
 extern int max_dynamic;
-extern u8 ThereIsACircle; //Pic_Process.c中定义
+extern volatile u8 ThereIsACircle; //Pic_Process.c中定义
 
 void cameraSysInit(void);
 void Image_Histeq(void);
@@ -35,5 +35,6 @@ void water_Level_Helper(void);
 void send_Image(u8 originPic[][80]);
 void HoughHelper(void);
 void HoughAfter(void);
+void HoughAfterHelper(void);
 #endif
 
