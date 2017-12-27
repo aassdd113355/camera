@@ -29,6 +29,8 @@ int main(void)
 		while(!ThereIsACircle);    			//没检测杯口的时候阻塞在这里	
 		
 		while(ov_sta<=1);
+		
+
 		if(ov_sta > 1)
 		{
 
@@ -39,14 +41,15 @@ int main(void)
 				Water_Level_Static();
 				Image_Send_After_Static();			
 				
-				while(max>=0 && max<6 && ThereIsACircle)
+				while(max>=0 && max< 6 && ThereIsACircle)
 				{
 					On_Off = 1 && !GlassArea;//加水信号开
 					while(ov_sta<=1);
 					dynamic_check();
 				}
 				
-		}					
+		}	
+	
 								
 	}
 	

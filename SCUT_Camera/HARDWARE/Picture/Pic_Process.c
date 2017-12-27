@@ -40,7 +40,7 @@ void cameraSysInit()
 	EXTI9_Init();						//使能定时器捕获	
 	GpioInit();
 	EXTIX_Init();
-	TIM3_Int_Init(49999,2999);			//10Khz计数频率,5秒钟中断	
+	TIM3_Int_Init(49999,3500);			//10Khz计数频率,5秒钟中断	
 
 }
 
@@ -282,7 +282,7 @@ void Sobel_After(void)
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-			if(Gy + Gx > 0.15 * 225){
+			if(Gy + Gx > 0.16 * 225){
 				Pic_Buff_Dup[i][j] = 255;
 			}else{
 				Pic_Buff_Dup[i][j] = 0;
@@ -326,7 +326,7 @@ void Hough()
 				}
 			}
 			
-			if(hough_space[tempI][tempJ][tempK] >= 10)
+			if(hough_space[tempI][tempJ][tempK] >= 12)
 			{
 							x_circle = tempJ;
 							y_circle = tempI;
@@ -357,13 +357,13 @@ void HoughAfter()
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+3)*(r_circle+3) && (abs(i-y_circle) < ((r_circle+3)/5 * 3)))
+					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+5)*(r_circle+5) && (abs(i-y_circle) < ((r_circle+5)/5 * 3)))
 					{
 						if(Pic_Buff[i][j] == 255)
 						{
 							for(k = 0;k< 10;k++)
 							{
-								for(l=0;l<361;l=l+5)
+								for(l=0;l<361;l=l+10)
 									{
 									t = (l * PI) / 180;
 									a = i-(r_circle-9+k)*cos(t);
@@ -384,7 +384,7 @@ void HoughAfter()
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if(((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle)*(r_circle)) && (abs(i-y_circle) < (r_circle/4)))
+					if((abs(i-y_circle) < (r_circle/4)))
 					{
 
 							if(hough_space[i][j][k] > max_value)
@@ -523,7 +523,7 @@ void Water_Level_Static(void)
 
 		for(i=0;i<9;i++)
 	{
-		if(pixel_count[i] < r_circle * r_circle * 0.06)                   //绿25
+		if(pixel_count[i] < r_circle * r_circle * 0.055)                   //绿25
 			{
 				pixel_count[i] = 0;
 			}
@@ -592,7 +592,7 @@ void Water_Level_Dynamic(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > r_circle * r_circle * 0.07)
+			if(pixel_count[i] > r_circle * r_circle * 0.08)
 			{
 				max_level = i;
 			}			
