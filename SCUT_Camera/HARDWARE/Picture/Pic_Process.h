@@ -36,5 +36,6 @@ void send_Image(u8 originPic[][80]);
 void HoughHelper(void);
 void HoughAfter(void);
 void HoughAfterHelper(void);
+void EXTI3_ClearAndForbid(u8 forbid);
 #endif
 

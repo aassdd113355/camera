@@ -28,27 +28,22 @@ void TIM3_Int_Init(u16 arr,u16 psc)
 void TIM3_IRQHandler(void)
 { 		    		  
 	if(TIM3->SR&0X0001)//溢出中断
-	{
-		
-				
-																		//确定杯口
-					while(ThereIsACircle == 0 && GlassArea == 0)
-						{
-						if(ov_sta>1)
-							{
-								CAMERA_Image_Cut_Compress_6080(0,0);
-								//Image_Send();
-								Image_Sobel();
-								//Image_Send();				
-								Hough();
-								Image_Send();
-								delay_ms(5000);
-							}
-						}
-						HoughAfter();
-						Image_Send();
+	{							
 
-				TIM3->CR1&=0x00;	//关闭定时器
+								EXTI3_ClearAndForbid(1);
+						if(GlassArea == 0)
+							{
+								delay_ms(200);	 
+								CAMERA_Image_Cut_Compress_6080(0,0);
+								Image_Sobel();			
+								Hough();
+								Image_Send();	
+								HoughAfter();
+								Image_Send();
+							}
+
+								TIM3->CR1&=0x00;	//关闭定时器
+								EXTI3_ClearAndForbid(0);
 	}				   
 	TIM3->SR&=~(1<<0);//清除中断标志位 	    
 }

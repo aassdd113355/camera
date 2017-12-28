@@ -45,6 +45,18 @@ void cameraSysInit()
 
 }
 
+void EXTI3_ClearAndForbid(u8 forbid)
+{
+		EXTI->PR=1<<3;     //«Â≥˝LINE3…œµƒ÷–∂œ±Í÷æŒª
+		if(forbid)
+		{
+			EXTI->IMR&=~(1<<3);//∆¡±Œ3œﬂ÷–∂œ
+		}else
+		{
+			EXTI->IMR|=1<<3;//≤ª∆¡±Œ3œﬂ÷–∂œ
+		}
+}
+
 
 
  /* ∫Ø ˝√˚£∫CAMERA_Image_Cut_Compress_6080
@@ -101,7 +113,7 @@ void CAMERA_Image_Cut_Compress_6080(u16 x_pos, u16 y_pos)        // 2017-07-13 ≤
 			}
 		}
 		memcpy(Pic_Buff_Dup,Pic_Buff,HEIGHT*WIDTH*sizeof(u8));
-		EXTI->PR=1<<9;     	 																	//«Â≥˝LINE9…œµƒ÷–∂œ±Í÷æŒª
+		EXTI->PR=1<<9;     	 																//«Â≥˝LINE9…œµƒ÷–∂œ±Í÷æŒª
 		ov_sta=0;					  														    //ø™ ºœ¬“ª¥Œ≤…ºØ
 		__enable_irq();																			//ø™÷–∂œ
 }
@@ -206,7 +218,7 @@ void Image_Sobel(void)
 		}
 	}
 	
-	 yuzhi = creatYuzhi(0.06);	//º∆À„„–÷µ
+	 yuzhi = creatYuzhi(0.07);	//º∆À„„–÷µ
 	
 		for(i = 1; i < HEIGHT - 1; i++) 
 	{
@@ -283,7 +295,7 @@ void Sobel_After(void)
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-			if(Gy + Gx > 32){
+			if(Gy + Gx > 35){
 				Pic_Buff_Dup[i][j] = 255;
 			}else{
 				Pic_Buff_Dup[i][j] = 0;
@@ -308,13 +320,14 @@ void Hough()
 			int tempI=0,tempJ=0,tempK=0;
 			__disable_irq();																			//πÿ÷–∂œ
 			HoughHelper();
-			
-			for(i = 0; i < HEIGHT; i++) 
+	
+			for(k=cntR-1; k >= 0; k--)
 			{
-				for(j = 0; j < WIDTH; j++)
+				for(i = 0; i < HEIGHT; i++) 
 				{
-					for(k=cntR-1; k >= 0; k--)
+					for(j = 0; j < WIDTH; j++)
 					{
+
 						if(hough_space[i][j][k] > max_value)
 						{
 							max_value = hough_space[i][j][k];
@@ -327,19 +340,11 @@ void Hough()
 				}
 			}
 			
-			if(hough_space[tempI][tempJ][tempK] >= 12)
-			{
+
 							x_circle = tempJ;
 							y_circle = tempI;
 							r_circle = minR + tempK*stepR;
 							ThereIsACircle = 1;
-			}else
-			{
-				x_circle = 0;
-				y_circle = 0;
-				r_circle = 0;
-				ThereIsACircle = 0;
-			}
 			
 
 
@@ -361,7 +366,7 @@ void HoughAfter()
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if((abs(i-y_circle) < (r_circle/4)))
+					if((abs(i-y_circle) < (r_circle/3)))
 					{
 
 							if(hough_space[i][j][k] > max_value)
@@ -393,7 +398,7 @@ void HoughAfterHelper()
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+5)*(r_circle+5) && (abs(i-y_circle) < ((r_circle+5)/2)))
+					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+5)*(r_circle+5) && (abs(i-y_circle) < ((r_circle+5)/3 * 2)))
 					{
 						if(Pic_Buff[i][j] == 255)
 						{
