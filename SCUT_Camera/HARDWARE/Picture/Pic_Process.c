@@ -277,13 +277,43 @@ int creatYuzhi(float x)
 
 
 
+//void Sobel_After(void)
+//{		int i,j;
+//		u8 Gx,Gy;
+////		int count=0;//统计区域像素个数
+////		int yuzhi;
+//	
+//	memcpy(Pic_Buff_Temp,Pic_Buff_Dup,HEIGHT*WIDTH*sizeof(u8));
+//	
+
+//	for(i = 1; i < HEIGHT - 1; i++) 
+//	{
+//		for(j = 1; j < WIDTH - 1; j++)
+//		{
+//			
+//			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/5)*(r_circle-r_circle/5)) //第二次边缘检测区域应比直方图均衡化更小一些
+//			{
+//			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
+//			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
+//			if(Gy + Gx > 35){
+//				Pic_Buff_Dup[i][j] = 255;
+//			}else{
+//				Pic_Buff_Dup[i][j] = 0;
+//			}
+//			}
+//		}
+//	}	
+//	memset(Pic_Buff_Temp,0,HEIGHT*WIDTH*sizeof(u8));
+//}
+
 void Sobel_After(void)
 {		int i,j;
 		u8 Gx,Gy;
-//		int count=0;//统计区域像素个数
-//		int yuzhi;
+		u16 count=0;//统计区域像素个数
+		u8 yuzhi;
+		
 	
-	memcpy(Pic_Buff_Temp,Pic_Buff_Dup,HEIGHT*WIDTH*sizeof(u8));
+		memcpy(Pic_Buff_Temp,Pic_Buff_Dup,HEIGHT*WIDTH*sizeof(u8));
 	
 
 	for(i = 1; i < HEIGHT - 1; i++) 
@@ -291,19 +321,82 @@ void Sobel_After(void)
 		for(j = 1; j < WIDTH - 1; j++)
 		{
 			
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/5)*(r_circle-r_circle/5)) //第二次边缘检测区域应比直方图均衡化更小一些
+			
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4)) //第二次边缘检测区域应比直方图均衡化更小一些
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-			if(Gy + Gx > 35){
-				Pic_Buff_Dup[i][j] = 255;
-			}else{
-				Pic_Buff_Dup[i][j] = 0;
+			Pic_Buff_Dup[i][j] = Gy + Gx;
+			count=count+1;
+			}
+		}
+	}
+	
+		yuzhi = creatYuzhi_After(0.2, count);
+	
+		for(i = 1; i < HEIGHT - 1; i++) 
+	{
+		for(j = 1; j < WIDTH - 1; j++)
+		{
+			
+			
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4))
+			{
+				if(Pic_Buff_Dup[i][j] > yuzhi){
+					Pic_Buff_Dup[i][j] = 255;
+				}else{
+					Pic_Buff_Dup[i][j] = 0;
 			}
 			}
 		}
-	}	
+	}
+	
 	memset(Pic_Buff_Temp,0,HEIGHT*WIDTH*sizeof(u8));
+}
+
+
+//计算阈值 ,参数x 为百分比，参数num为区域内的像素数，  例如：0.03 为百分之三
+int creatYuzhi_After(float x, int num)
+{	
+	u16 yuzhiIndex, yuzhuleiji, glassPixelNum;
+	int i,j,countTo255;
+	u16 sobel_gray_array[256];
+	
+	//yuzhiIndex = num * x;
+	for(i = 0; i < 256; i++)    
+	{
+		sobel_gray_array[i] = 0;
+	}
+	
+	// 统计各灰度级的数量
+	for(i = 1; i < HEIGHT-1; i++) 
+	{
+		for(j = 1; j < WIDTH-1; j++)
+		{
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4))
+			{
+				sobel_gray_array[Pic_Buff_Dup[i][j]] = sobel_gray_array[Pic_Buff_Dup[i][j]] + 1; 
+			}
+		}
+	}	
+	
+	//亮度30以下认为是杯子
+	for(i = 0; i<0; i++)
+	{
+		glassPixelNum = glassPixelNum + sobel_gray_array[i];
+	}
+	
+	yuzhiIndex = (num-glassPixelNum) * x;
+	
+	yuzhuleiji = 0;
+	countTo255 = 0;
+	for(i=255; yuzhuleiji<yuzhiIndex ; i--)
+	{
+		yuzhuleiji = yuzhuleiji + sobel_gray_array[i];
+	}
+	
+	
+	return i;
 }
 
 
@@ -536,7 +629,7 @@ void Water_Level_Static(void)
 
 		for(i=0;i<9;i++)
 	{
-		if(pixel_count[i] < r_circle * r_circle * 0.055)                   //绿25
+		if(pixel_count[i] < r_circle * r_circle * 0.03)                   //绿25
 			{
 				pixel_count[i] = 0;
 			}
@@ -605,7 +698,7 @@ void Water_Level_Dynamic(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > r_circle * r_circle * 0.06)
+			if(pixel_count[i] > r_circle * r_circle * 0.08)
 			{
 				max_level = i;
 			}			
@@ -652,7 +745,7 @@ void water_Level_Helper()
 		{
 			for(i=0;i<HEIGHT;i++)
 			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/5)*(r_circle-r_circle/5) && (abs(j-x_circle) < (r_circle/2)) )	
+				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4))	
 					{
 						count++;
 						if(Pic_Buff_Dup[i][j] == 255)
@@ -671,4 +764,123 @@ void water_Level_Helper()
 		}
 }
 
+void OPTA()
+{
+	int i, j, loopflag=1;
+	while(loopflag)
+	{ 
+		loopflag = 0;
+		for(i = 1; i < HEIGHT-2; i++) 
+		{
+			for(j = 1; j < WIDTH-2; j++)
+			{
+				if(((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4)) && Pic_Buff_Dup[i][j] == 255)
+				{
+					//8个消除模板和2个保留模板
+					if(  Pic_Buff_Dup[i-1][j-1] == 0
+						&& Pic_Buff_Dup[i-1][j] == 0
+						&& Pic_Buff_Dup[i-1][j+1] == 0
+						&& Pic_Buff_Dup[i][j-1] == 255	
+						&& Pic_Buff_Dup[i][j+1] == 255
+						&& Pic_Buff_Dup[i+1][j] == 255)
+					{
+						if( Pic_Buff_Dup[i-1][j] != 0
+							||Pic_Buff_Dup[i+1][j] != 255
+						  ||Pic_Buff_Dup[i+2][j] != 0)
+						{
+							Pic_Buff_Dup[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff_Dup[i-1][j-1] == 0
+								&& Pic_Buff_Dup[i][j-1] == 0
+								&& Pic_Buff_Dup[i+1][j-1] == 0
+								&& Pic_Buff_Dup[i-1][j] == 255
+								&& Pic_Buff_Dup[i+1][j] == 255
+								&& Pic_Buff_Dup[i][j+1] == 255)
+					{
+						if( Pic_Buff_Dup[i][j-1] != 0
+							||Pic_Buff_Dup[i][j+1] != 255
+						  ||Pic_Buff_Dup[i][j+2] != 0)
+						{
+							Pic_Buff_Dup[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff_Dup[i+1][j-1] == 0
+								&& Pic_Buff_Dup[i+1][j] == 0
+								&& Pic_Buff_Dup[i+1][j+1] == 0
+								&& Pic_Buff_Dup[i][j-1] == 255
+								&& Pic_Buff_Dup[i][j+1] == 255
+								&& Pic_Buff_Dup[i-1][j] == 255)
+					{
+							Pic_Buff_Dup[i][j] = 0;
+							loopflag = 1;
+					}else if(Pic_Buff_Dup[i-1][j+1] == 0
+								&& Pic_Buff_Dup[i][j+1] == 0
+								&& Pic_Buff_Dup[i+1][j+1] == 0
+								&& Pic_Buff_Dup[i-1][j] == 255
+								&& Pic_Buff_Dup[i+1][j] == 255
+								&& Pic_Buff_Dup[i][j-1] == 255)
+					{
+							Pic_Buff_Dup[i][j] = 0;
+							loopflag = 1;
+					}else if(Pic_Buff_Dup[i-1][j] == 0
+								&& Pic_Buff_Dup[i-1][j+1] == 0
+								&& Pic_Buff_Dup[i][j+1] == 0
+								&& Pic_Buff_Dup[i+1][j] == 255
+								&& Pic_Buff_Dup[i][j-1] == 255)
+					{
+						if( Pic_Buff_Dup[i-1][j] != 0
+							||Pic_Buff_Dup[i+1][j] != 255
+						  ||Pic_Buff_Dup[i+2][j] != 0)
+						{
+							Pic_Buff_Dup[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff_Dup[i-1][j-1] == 0
+								&& Pic_Buff_Dup[i-1][j] == 0
+								&& Pic_Buff_Dup[i][j-1] == 0
+								&& Pic_Buff_Dup[i][j+1] == 255
+								&& Pic_Buff_Dup[i+1][j] == 255)
+					{
+						if( Pic_Buff_Dup[i-1][j] != 0
+							||Pic_Buff_Dup[i+1][j] != 255
+						  ||Pic_Buff_Dup[i+2][j] != 0)
+						{
+							Pic_Buff_Dup[i][j] = 0;
+							loopflag = 1;
+						}else if( Pic_Buff_Dup[i][j-1] != 0
+										||Pic_Buff_Dup[i][j+1] != 255
+										||Pic_Buff_Dup[i][j+2] != 0)
+						{
+							Pic_Buff_Dup[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff_Dup[i][j-1] == 0
+								&& Pic_Buff_Dup[i+1][j-1] == 0
+								&& Pic_Buff_Dup[i+1][j] == 0
+								&& Pic_Buff_Dup[i-1][j] == 255
+								&& Pic_Buff_Dup[i][j+1] == 1)
+					{
+						if( Pic_Buff_Dup[i][j-1] != 0
+							||Pic_Buff_Dup[i][j+1] != 255
+							||Pic_Buff_Dup[i][j+2] != 0)
+						{
+							Pic_Buff_Dup[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff_Dup[i][j+1] == 0
+								&& Pic_Buff_Dup[i+1][j] == 0
+								&& Pic_Buff_Dup[i+1][j+1] == 0
+								&& Pic_Buff_Dup[i-1][j] == 255
+								&& Pic_Buff_Dup[i][j-1] == 255)
+					{
+							Pic_Buff_Dup[i][j] = 0;
+							loopflag = 1;						
+					}
+				
+				}
+			}
+		}
+	}
+}
 

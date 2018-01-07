@@ -31,11 +31,13 @@ void Image_Send_Dynamic(void);
 void Image_Send_After_Static(void);
 void Water_Level_Static(void);
 int creatYuzhi(float x);
+int creatYuzhi_After(float x, int num);
 void water_Level_Helper(void);
 void send_Image(u8 originPic[][80]);
 void HoughHelper(void);
 void HoughAfter(void);
 void HoughAfterHelper(void);
 void EXTI3_ClearAndForbid(u8 forbid);
+void OPTA(void);
 #endif
 

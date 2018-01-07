@@ -30,13 +30,14 @@ int main(void)
 		
 		
 
-//		if(ov_sta > 1)
-//		{
+		if(ov_sta > 1)
+		{
 
 
 				CAMERA_Image_Cut_Compress_6080(0,0);//	获取一帧图片，并且存在数组       2017-07-13 By BachMan			
 				Image_Histeq();
 				Sobel_After();
+			  OPTA();
 				Water_Level_Static();
 				Image_Send_After_Static();			
 				
@@ -46,7 +47,7 @@ int main(void)
 					dynamic_check();
 				}
 				
-//		}	
+		}	
 
 								
 	}
@@ -64,7 +65,7 @@ void dynamic_check()
 				Sobel_After();
 				Water_Level_Dynamic();	
 				Image_Send_Dynamic();
-				if(max_dynamic > 6)
+				if(max_dynamic > 5)
 				{
 					On_Off = 0;//关断加水信号
 					max = 6;	//连接动态静态检测
