@@ -21,7 +21,7 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.14.0_KEIL
 Dialog DLL:      TCM.DLL V1.14.4.0
  
 <h2>Project:</h2>
-C:\Users\Lee\camera\SCUT_Camera\USER\TEST.uvprojx
+C:\Users\Lee\Desktop\SCUT_Camera\USER\TEST.uvprojx
 Project File Date:  12/29/2017
 
 <h2>Output:</h2>
@@ -32,11 +32,13 @@ main.c(55): warning:  #128-D: loop is not reachable
         while(1);
 main.c: 1 warning, 0 errors
 compiling Pic_Process.c...
-..\HARDWARE\Picture\Pic_Process.c(177): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-                histEQU[n] = (u8)(gray_density_sum_array[n] * 255.0+0.5);
-..\HARDWARE\Picture\Pic_Process.c(362): warning:  #550-D: variable "countTo255" was set but never used
+..\HARDWARE\Picture\Pic_Process.c(171): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                histEQU[n] = (u8)((gray_density_array[n+1] * 255.0)+0.5);
+..\HARDWARE\Picture\Pic_Process.c(309): warning:  #550-D: variable "glassYuzhi" was set but never used
+          u8 glassYuzhi;
+..\HARDWARE\Picture\Pic_Process.c(393): warning:  #550-D: variable "countTo255" was set but never used
         int i,j,countTo255;
-..\HARDWARE\Picture\Pic_Process.c: 2 warnings, 0 errors
+..\HARDWARE\Picture\Pic_Process.c: 3 warnings, 0 errors
 compiling delay.c...
 compiling sys.c...
 compiling usart.c...
@@ -47,12 +49,12 @@ compiling exti.c...
 compiling dma.c...
 compiling gpio.c...
 linking...
-Program Size: Code=16296 RO-data=1296 RW-data=36 ZI-data=75212  
+Program Size: Code=17648 RO-data=1296 RW-data=36 ZI-data=74956  
 FromELF: creating hex file...
-"..\OBJ\cameraMain.axf" - 0 Error(s), 3 Warning(s).
+"..\OBJ\cameraMain.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\Lee\camera\SCUT_Camera\USER\RTE
+  C:\Users\Lee\Desktop\SCUT_Camera\USER\RTE
   D:\MDK5.14\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include
 
 <h2>Collection of Component Files used:</h2>

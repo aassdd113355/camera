@@ -7,8 +7,8 @@
 #define THRESHOLD 0x6a
 #define SEND_BUF_SIZE 4804
 #define PI 3.1415926
-#define maxR 25	//22
-#define minR 15	//17
+#define maxR 30	//22
+#define minR 20	//17
 #define stepR 1
 #define cntR (((maxR-minR)/stepR)+1)
 
@@ -39,5 +39,7 @@ void HoughAfter(void);
 void HoughAfterHelper(void);
 void EXTI3_ClearAndForbid(u8 forbid);
 void OPTA(void);
+void OPTATest(void);
+u8 creatYuzhi_Glass(u16);
 #endif
 

@@ -15,9 +15,10 @@ u8 Pic_Buff_Temp[HEIGHT][WIDTH];
 u8 Pic_Buff[HEIGHT][WIDTH]; 
 u8 SendBuff[SEND_BUF_SIZE] = {0};
 u8 hough_space[HEIGHT][WIDTH][cntR]={0}; 
-volatile int x_circle=2, y_circle=2, r_circle=2;
-float gray_density_array[256];      														 // ÓÃÓÚ´æ·Å¸÷¸ö»Ò¶È¼¶µÄÃÜ¶È£¨°Ù·Ö±È£©
-float gray_density_sum_array[256];   														 //ÓÃÓÚ´æ·Å¸÷¸ö»Ò¶È¼¶µÄÃÜ¶È£¨°Ù·Ö±È£©µÄÀÛ¼ÓÖµ   
+float gray_density_array[257];      														 // ÓÃÓÚ´æ·Å¸÷¸ö»Ò¶È¼¶µÄÃÜ¶È£¨°Ù·Ö±È£©
+u8 histEQU[256];
+u16 gray_array[256];              															 // ÓÃÓÚ´æ·Å¸÷¸ö»Ò¶È¼¶µÄÊýÁ¿
+volatile int x_circle=2, y_circle=2, r_circle=2; 
 int max = -1;
 int max_dynamic = -1;
 int pixel_count[9]={0};
@@ -41,7 +42,7 @@ void cameraSysInit()
 	EXTI9_Init();						//Ê¹ÄÜ¶¨Ê±Æ÷²¶»ñ	
 	GpioInit();
 	EXTIX_Init();
-	TIM3_Int_Init(49999,4000);			//10Khz¼ÆÊýÆµÂÊ,5ÃëÖÓÖÐ¶Ï	
+	TIM3_Int_Init(19999,7399);			//10Khz¼ÆÊýÆµÂÊ,2ÃëÖÓÖÐ¶Ï	
 
 }
 
@@ -126,8 +127,8 @@ void CAMERA_Image_Cut_Compress_6080(u16 x_pos, u16 y_pos)        // 2017-07-13 ²
  */
 void Image_Histeq(void)
 {
-	u8 histEQU[256];
-	u16 gray_array[256];              															 // ÓÃÓÚ´æ·Å¸÷¸ö»Ò¶È¼¶µÄÊýÁ¿
+
+	u16 countSum = 0;
 	u16 r, c;
 	u16  i, j, k, n;
 	
@@ -137,7 +138,6 @@ void Image_Histeq(void)
 		gray_array[i] = 0;
 		histEQU[i] = 0;
 		gray_density_array[i] = 0;
-		gray_density_sum_array[i] = 0;
 	}
 	
 	// Í³¼Æ¸÷»Ò¶È¼¶µÄÊýÁ¿
@@ -148,6 +148,7 @@ void Image_Histeq(void)
 			if((r-y_circle)*(r-y_circle) + (c-x_circle)*(c-x_circle) < (r_circle-r_circle/8)*(r_circle-r_circle/8))
 				{
 					gray_array[Pic_Buff_Dup[r][c]] = gray_array[Pic_Buff_Dup[r][c]] + 1; 
+					countSum = countSum + 1;
 				}				
 		}
 	}	
@@ -155,26 +156,19 @@ void Image_Histeq(void)
 	// ¼ÆËã²¢ÇÒ¼ÇÂ¼¸÷»Ò¶ÈµÄÃÜ¶È£¨°Ù·Ö±È£©
 	for(j = 0; j < 256; j++)    
 	{
-		gray_density_array[j] = ((float)gray_array[j])/(HEIGHT*WIDTH);  
+		gray_density_array[j] = gray_array[j]/(float)countSum;  
 	}
 	
 	// ÀÛ¼Ó¸÷»Ò¶ÈÖµµÄÃÜ¶È£¨°Ù·Ö±ÈÀÛ¼Ó£©
-	for (k = 0; k < 256; k++)
+	for (k = 1; k < 257; k++)
 	{
-		if(k == 0)
-		{
-			gray_density_sum_array[k] = gray_density_array[k];		
-		}
-		else
-		{
-			gray_density_sum_array[k] = gray_density_sum_array[k - 1] + gray_density_array[k];				
-		}	
+	gray_density_array[k] = gray_density_array[k-1] + gray_density_array[k];
 	}
 	
 	//
 	for(n = 0; n < 256; n++)
 	{
-		histEQU[n] = (u8)(gray_density_sum_array[n] * 255.0+0.5);
+		histEQU[n] = (u8)((gray_density_array[n+1] * 255.0)+0.5);
 	}
 	
 	// ½«Í¼Æ¬Êý×é	Pic_Buff µÄ»Ò¶ÈÖµ×ª»¯Îª¾ùºâ»¯ºóÐÂµÄ»Ò¶ÈÖµ
@@ -202,8 +196,11 @@ void Image_Sobel(void)
 {	int i,j;
 	u8 Gx,Gy;
 	int yuzhi;
+	u16 tempGray;
 
 	memcpy(Pic_Buff_Temp,Pic_Buff,HEIGHT*WIDTH*sizeof(u8));
+	
+	yuzhi = creatYuzhi(0.1);	//¼ÆËããÐÖµ
 
 	for(i = 1; i < HEIGHT - 1; i++) 
 	{
@@ -213,27 +210,28 @@ void Image_Sobel(void)
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
 		
 
-			Pic_Buff[i][j] = Gx + Gy;
-			
-		}
-	}
-	
-	 yuzhi = creatYuzhi(0.07);	//¼ÆËããÐÖµ
-	
-		for(i = 1; i < HEIGHT - 1; i++) 
-	{
-		for(j = 1; j < WIDTH - 1; j++)
-		{
-
-			if(Pic_Buff[i][j] > yuzhi){
+			tempGray = Gx + Gy;
+			if(tempGray > yuzhi){
 				Pic_Buff[i][j] = 255;
 			}else{
 				Pic_Buff[i][j] = 0;
 			}
-
-			
 		}
 	}
+	
+	 
+	
+//	for(i = 1; i < HEIGHT - 1; i++) 
+//	{
+//		for(j = 1; j < WIDTH - 1; j++)
+//		{
+//			if(tempGray > yuzhi){
+//				Pic_Buff[i][j] = 255;
+//			}else{
+//				Pic_Buff[i][j] = 0;
+//			}
+//		}
+//	}
 	
 
 	memset(Pic_Buff_Temp,0,HEIGHT*WIDTH*sizeof(u8));
@@ -256,10 +254,7 @@ int creatYuzhi(float x)
 	{
 		for(j = 1; j < WIDTH-1; j++)
 		{
-			
-				
-					sobel_gray_array[Pic_Buff[i][j]] = sobel_gray_array[Pic_Buff[i][j]] + 1; 
-								
+			sobel_gray_array[Pic_Buff[i][j]] = sobel_gray_array[Pic_Buff[i][j]] + 1; 	
 		}
 	}	
 	
@@ -311,10 +306,26 @@ void Sobel_After(void)
 		u8 Gx,Gy;
 		u16 count=0;//Í³¼ÆÇøÓòÏñËØ¸öÊý
 		u8 yuzhi;
+	  u8 glassYuzhi;
+		u16 tempGray;
+		
 		
 	
 		memcpy(Pic_Buff_Temp,Pic_Buff_Dup,HEIGHT*WIDTH*sizeof(u8));
 	
+	for(i = 1; i < HEIGHT - 1; i++) 
+	{
+		for(j = 1; j < WIDTH - 1; j++)
+		{		
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6))
+			{
+				count=count+1;
+			}
+		}
+	}
+	
+	yuzhi = creatYuzhi_After(0.1, count);
+	glassYuzhi = creatYuzhi_Glass(count);
 
 	for(i = 1; i < HEIGHT - 1; i++) 
 	{
@@ -322,38 +333,58 @@ void Sobel_After(void)
 		{
 			
 			
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4)) //µÚ¶þ´Î±ßÔµ¼ì²âÇøÓòÓ¦±ÈÖ±·½Í¼¾ùºâ»¯¸üÐ¡Ò»Ð©
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6)) //µÚ¶þ´Î±ßÔµ¼ì²âÇøÓòÓ¦±ÈÖ±·½Í¼¾ùºâ»¯¸üÐ¡Ò»Ð©
 			{
 			Gx = abs((Pic_Buff_Temp[i+1][j-1] + 2 * Pic_Buff_Temp[i+1][j] + Pic_Buff_Temp[i+1][j+1]) - (Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i-1][j] + Pic_Buff_Temp[i-1][j+1]));
 			Gy = abs((Pic_Buff_Temp[i-1][j-1] + 2 * Pic_Buff_Temp[i][j-1] + Pic_Buff_Temp[i+1][j-1]) - (Pic_Buff_Temp[i-1][j+1] + 2 * Pic_Buff_Temp[i][j+1] + Pic_Buff_Temp[i+1][j+1]));
-			Pic_Buff_Dup[i][j] = Gy + Gx;
-			count=count+1;
-			}
-		}
-	}
-	
-		yuzhi = creatYuzhi_After(0.2, count);
-	
-		for(i = 1; i < HEIGHT - 1; i++) 
-	{
-		for(j = 1; j < WIDTH - 1; j++)
-		{
-			
-			
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4))
-			{
-				if(Pic_Buff_Dup[i][j] > yuzhi){
+			tempGray = Gy + Gx;
+				if(tempGray > yuzhi && tempGray > 200){ //&& Pic_Buff_Dup[i][j] > 150
 					Pic_Buff_Dup[i][j] = 255;
 				}else{
 					Pic_Buff_Dup[i][j] = 0;
-			}
+				}
 			}
 		}
 	}
+	
+
+	
+//		for(i = 1; i < HEIGHT - 1; i++) 
+//	{
+//		for(j = 1; j < WIDTH - 1; j++)
+//		{
+//			
+//			
+//			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6))
+//			{
+//				if(Pic_Buff_Dup[i][j] > yuzhi ){ //&& Pic_Buff_Dup[i][j] > 100
+//					Pic_Buff_Dup[i][j] = 255;
+//				}else{
+//					Pic_Buff_Dup[i][j] = 0;
+//			}
+//			}
+//		}
+//	}
 	
 	memset(Pic_Buff_Temp,0,HEIGHT*WIDTH*sizeof(u8));
 }
 
+u8 creatYuzhi_Glass(u16 count)
+{
+	u16 tempSum = 0;
+	int i, j;
+	for(i = 1; i < HEIGHT - 1; i++) 
+	{
+		for(j = 1; j < WIDTH - 1; j++)
+		{
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6)) //µÚ¶þ´Î±ßÔµ¼ì²âÇøÓòÓ¦±ÈÖ±·½Í¼¾ùºâ»¯¸üÐ¡Ò»Ð©
+			{
+				tempSum = tempSum + Pic_Buff_Dup[i][j];
+			}
+		}
+	}
+	return (u8)(tempSum/count);
+}
 
 //¼ÆËããÐÖµ ,²ÎÊýx Îª°Ù·Ö±È£¬²ÎÊýnumÎªÇøÓòÄÚµÄÏñËØÊý£¬  ÀýÈç£º0.03 Îª°Ù·ÖÖ®Èý
 int creatYuzhi_After(float x, int num)
@@ -373,7 +404,7 @@ int creatYuzhi_After(float x, int num)
 	{
 		for(j = 1; j < WIDTH-1; j++)
 		{
-			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4))
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/3)*(r_circle-r_circle/3))
 			{
 				sobel_gray_array[Pic_Buff_Dup[i][j]] = sobel_gray_array[Pic_Buff_Dup[i][j]] + 1; 
 			}
@@ -459,7 +490,7 @@ void HoughAfter()
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if((abs(i-y_circle) < (r_circle/3)))
+					if((abs(i-y_circle) < (r_circle/4)) && (abs(j-x_circle) < (r_circle/3)))
 					{
 
 							if(hough_space[i][j][k] > max_value)
@@ -491,7 +522,7 @@ void HoughAfterHelper()
 			{
 				for(j = 0; j < WIDTH; j++)
 				{
-					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+5)*(r_circle+5) && (abs(i-y_circle) < ((r_circle+5)/3 * 2)))
+					if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) <= (r_circle+3)*(r_circle+3) && (abs(i-y_circle) < ((r_circle+3)/2)))
 					{
 						if(Pic_Buff[i][j] == 255)
 						{
@@ -627,14 +658,13 @@ void Water_Level_Static(void)
 	water_Level_Helper();
 		
 
-		for(i=0;i<9;i++)
+	for(i=0;i<9;i++)
 	{
 		if(pixel_count[i] < r_circle * r_circle * 0.03)                   //ÂÌ25
 			{
-				pixel_count[i] = 0;
+			pixel_count[i] = 0;
 			}
 		pixel_count_sort[i] = pixel_count[i];											//		¾²Ì¬¼ì²â									
-		
 	}
 	
 		for(i=0;i<9;i++)
@@ -698,7 +728,7 @@ void Water_Level_Dynamic(void)
 	for(i=0;i<9;i++)
 	{
 
-			if(pixel_count[i] > r_circle * r_circle * 0.08)
+			if(pixel_count[i] > r_circle * r_circle * 0.05)
 			{
 				max_level = i;
 			}			
@@ -730,7 +760,7 @@ void water_Level_Helper()
 		{
 			for(i=0;i<HEIGHT;i++)
 			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4) && (abs(i-y_circle) < (r_circle*2/3)))
+				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/3)*(r_circle-r_circle/3) && (abs(i-y_circle) < (r_circle*2/3)))
 				{					
 					level_sum++;
 				}				
@@ -745,7 +775,7 @@ void water_Level_Helper()
 		{
 			for(i=0;i<HEIGHT;i++)
 			{
-				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4))	
+				if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/3)*(r_circle-r_circle/3))	
 					{
 						count++;
 						if(Pic_Buff_Dup[i][j] == 255)
@@ -764,6 +794,126 @@ void water_Level_Helper()
 		}
 }
 
+void OPTATest()
+{
+	int i, j, loopflag=1;
+	while(loopflag)
+	{ 
+		loopflag = 0;
+		for(i = 1; i < HEIGHT-2; i++) 
+		{
+			for(j = 1; j < WIDTH-2; j++)
+			{
+				if( Pic_Buff[i][j] == 255)
+				{
+					//8¸öÏû³ýÄ£°åºÍ2¸ö±£ÁôÄ£°å
+					if(  Pic_Buff[i-1][j-1] == 0
+						&& Pic_Buff[i-1][j] == 0
+						&& Pic_Buff[i-1][j+1] == 0
+						&& Pic_Buff[i][j-1] == 255	
+						&& Pic_Buff[i][j+1] == 255
+						&& Pic_Buff[i+1][j] == 255)
+					{
+						if( Pic_Buff[i-1][j] != 0
+							||Pic_Buff[i+1][j] != 255
+						  ||Pic_Buff[i+2][j] != 0)
+						{
+							Pic_Buff[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff[i-1][j-1] == 0
+								&& Pic_Buff[i][j-1] == 0
+								&& Pic_Buff[i+1][j-1] == 0
+								&& Pic_Buff[i-1][j] == 255
+								&& Pic_Buff[i+1][j] == 255
+								&& Pic_Buff[i][j+1] == 255)
+					{
+						if( Pic_Buff[i][j-1] != 0
+							||Pic_Buff[i][j+1] != 255
+						  ||Pic_Buff[i][j+2] != 0)
+						{
+							Pic_Buff[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff[i+1][j-1] == 0
+								&& Pic_Buff[i+1][j] == 0
+								&& Pic_Buff[i+1][j+1] == 0
+								&& Pic_Buff[i][j-1] == 255
+								&& Pic_Buff[i][j+1] == 255
+								&& Pic_Buff[i-1][j] == 255)
+					{
+							Pic_Buff[i][j] = 0;
+							loopflag = 1;
+					}else if(Pic_Buff[i-1][j+1] == 0
+								&& Pic_Buff[i][j+1] == 0
+								&& Pic_Buff[i+1][j+1] == 0
+								&& Pic_Buff[i-1][j] == 255
+								&& Pic_Buff[i+1][j] == 255
+								&& Pic_Buff[i][j-1] == 255)
+					{
+							Pic_Buff[i][j] = 0;
+							loopflag = 1;
+					}else if(Pic_Buff[i-1][j] == 0
+								&& Pic_Buff[i-1][j+1] == 0
+								&& Pic_Buff[i][j+1] == 0
+								&& Pic_Buff[i+1][j] == 255
+								&& Pic_Buff[i][j-1] == 255)
+					{
+						if( Pic_Buff[i-1][j] != 0
+							||Pic_Buff[i+1][j] != 255
+						  ||Pic_Buff[i+2][j] != 0)
+						{
+							Pic_Buff[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff[i-1][j-1] == 0
+								&& Pic_Buff[i-1][j] == 0
+								&& Pic_Buff[i][j-1] == 0
+								&& Pic_Buff[i][j+1] == 255
+								&& Pic_Buff[i+1][j] == 255)
+					{
+						if( Pic_Buff[i-1][j] != 0
+							||Pic_Buff[i+1][j] != 255
+						  ||Pic_Buff[i+2][j] != 0)
+						{
+							Pic_Buff[i][j] = 0;
+							loopflag = 1;
+						}else if( Pic_Buff[i][j-1] != 0
+										||Pic_Buff[i][j+1] != 255
+										||Pic_Buff[i][j+2] != 0)
+						{
+							Pic_Buff[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff[i][j-1] == 0
+								&& Pic_Buff[i+1][j-1] == 0
+								&& Pic_Buff[i+1][j] == 0
+								&& Pic_Buff[i-1][j] == 255
+								&& Pic_Buff[i][j+1] == 1)
+					{
+						if( Pic_Buff[i][j-1] != 0
+							||Pic_Buff[i][j+1] != 255
+							||Pic_Buff[i][j+2] != 0)
+						{
+							Pic_Buff[i][j] = 0;
+							loopflag = 1;
+						}
+					}else if(Pic_Buff[i][j+1] == 0
+								&& Pic_Buff[i+1][j] == 0
+								&& Pic_Buff[i+1][j+1] == 0
+								&& Pic_Buff[i-1][j] == 255
+								&& Pic_Buff[i][j-1] == 255)
+					{
+							Pic_Buff[i][j] = 0;
+							loopflag = 1;						
+					}
+				
+				}
+			}
+		}
+	}
+}
+
 void OPTA()
 {
 	int i, j, loopflag=1;
@@ -774,7 +924,7 @@ void OPTA()
 		{
 			for(j = 1; j < WIDTH-2; j++)
 			{
-				if(((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/4)*(r_circle-r_circle/4)) && Pic_Buff_Dup[i][j] == 255)
+				if(((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/3)*(r_circle-r_circle/3)) && Pic_Buff_Dup[i][j] == 255)
 				{
 					//8¸öÏû³ýÄ£°åºÍ2¸ö±£ÁôÄ£°å
 					if(  Pic_Buff_Dup[i-1][j-1] == 0

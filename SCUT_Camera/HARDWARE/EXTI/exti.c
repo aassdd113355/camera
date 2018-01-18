@@ -24,17 +24,17 @@ void EXTI9_5_IRQHandler(void)
  //3线中断服务函数
 void EXTI3_IRQHandler(void)
 {		
-		delay_ms(500);
+		delay_ms(50);
 		if(GlassArea == 1)
 		{
-
+			Light_On=0; //灯光关闭
 			On_Off = 0; 	//关
 			ThereIsACircle = 0;
 		}
 		else
-		{		
+		{		Light_On=1; //灯光打开
 				TIM3->CR1|=0x01;	//使能定时器	
-				delay_ms(40);		//清除第一次中断
+				delay_ms(100);		//清除第一次中断
 				TIM3->SR&=~(1<<0);	//清除中断标志位				
 		}
 
@@ -53,7 +53,7 @@ void EXTI9_Init(void)
 
 void EXTIX_Init(void)	//外部中断初始化	
 {	
-	Ex_NVIC_Config(GPIO_D,3,RTIR); 			//任意沿触发	
-	MY_NVIC_Init(1,0,EXTI3_IRQn,2);		//抢占1,子优先级0，组2	
+	Ex_NVIC_Config(GPIO_D,3,3); 			//2018.1.17改
+	MY_NVIC_Init(3,0,EXTI3_IRQn,2);		//抢占1,子优先级0，组2	
 }
 

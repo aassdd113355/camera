@@ -19,6 +19,7 @@
 //LED端口定义
 #define On_Off PDout(2)	// PD2 控制继电器开关
 #define GlassArea PDin(3)	// PD3 接受光电对管输入 0时有物体
+#define Light_On PDout(5) //PD5 控制灯光的继电器开关，启动时常亮，在搜索完杯口后关闭灯光
 
 void GpioInit(void);//初始化		 				    
 #endif

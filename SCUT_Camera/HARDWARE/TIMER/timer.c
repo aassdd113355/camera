@@ -20,13 +20,16 @@ void TIM3_Int_Init(u16 arr,u16 psc)
 		
 	TIM3->DIER|=1<<0;   //允许更新中断
 	TIM3->SR&=~(1<<0);	//清除中断标志位
-  	MY_NVIC_Init(1,0,TIM3_IRQn,2);	//抢占0，子优先级0，组2	
+  MY_NVIC_Init(1,0,TIM3_IRQn,2);	//抢占0，子优先级0，组2	
 
 }
 
 //定时器3中断服务程序	 
 void TIM3_IRQHandler(void)
-{ 		    		  
+{ 		    		
+
+					TIM3->CR1&=0x00;	//关闭定时器   By Bachman 2018 - 01 -18
+					TIM3->CNT = 0;    // 计数器清零  By Bachman 2018 - 01 -18
 	if(TIM3->SR&0X0001)//溢出中断
 	{							
 
@@ -35,14 +38,18 @@ void TIM3_IRQHandler(void)
 							{
 								delay_ms(200);	 
 								CAMERA_Image_Cut_Compress_6080(0,0);
-								Image_Sobel();			
+								Light_On=0; //搜索完圆后灯光关闭
+								Image_Sobel();	
+								OPTATest();
 								Hough();
 								Image_Send();	
 								HoughAfter();
 								Image_Send();
+								
 							}
-
-								TIM3->CR1&=0x00;	//关闭定时器
+								
+//								TIM3->CR1&=0x00;	//关闭定时器
+								TIM3->SR&=~(1<<0);	//清除中断标志位
 								EXTI3_ClearAndForbid(0);
 	}				   
 	TIM3->SR&=~(1<<0);//清除中断标志位 	    
