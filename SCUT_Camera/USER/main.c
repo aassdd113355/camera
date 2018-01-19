@@ -37,6 +37,7 @@ int main(void)
 				CAMERA_Image_Cut_Compress_6080(0,0);//	获取一帧图片，并且存在数组       2017-07-13 By BachMan			
 				Image_Histeq();
 				Sobel_After();
+				eraseHorizon();
 //			OPTA();
 				Water_Level_Static();
 				Image_Send_After_Static();			
@@ -52,7 +53,8 @@ int main(void)
 								
 	}
 	
-	while(1);
+	while(1)
+	;
 }	
 //	//动态检测 静态结束后
 void dynamic_check()

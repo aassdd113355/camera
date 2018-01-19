@@ -24,7 +24,7 @@ void EXTI9_5_IRQHandler(void)
  //3线中断服务函数
 void EXTI3_IRQHandler(void)
 {		
-		delay_ms(50);
+		delay_ms(100);
 		if(GlassArea == 1)
 		{
 			Light_On=0; //灯光关闭
@@ -32,10 +32,16 @@ void EXTI3_IRQHandler(void)
 			ThereIsACircle = 0;
 		}
 		else
-		{		Light_On=1; //灯光打开
-				TIM3->CR1|=0x01;	//使能定时器	
+		{		Light_On=1; 			//灯光打开
+				TIM3->CR1|=0x01;	//使能定时器
 				delay_ms(100);		//清除第一次中断
-				TIM3->SR&=~(1<<0);	//清除中断标志位				
+				TIM3->SR&=~(1<<0);	//清除中断标志位			
+//				TIM3->CNT = 0;
+//				TIM3->EGR = 1;
+//				while((TIM3->SR&0x01) == 0)
+//				;
+//		  	TIM3->SR&=~(1<<0);	//清除中断标志位	
+//				TIM3->DIER|=1<<0;   //允许更新中断				
 		}
 
 	EXTI->PR=1<<3;     //清除LINE3上的中断标志位						  

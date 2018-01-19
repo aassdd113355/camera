@@ -306,11 +306,11 @@ void Sobel_After(void)
 		u8 Gx,Gy;
 		u16 count=0;//统计区域像素个数
 		u8 yuzhi;
-	  u8 glassYuzhi;
+//	  u8 glassYuzhi;
 		u16 tempGray;
 		
 		
-	
+		
 		memcpy(Pic_Buff_Temp,Pic_Buff_Dup,HEIGHT*WIDTH*sizeof(u8));
 	
 	for(i = 1; i < HEIGHT - 1; i++) 
@@ -325,7 +325,7 @@ void Sobel_After(void)
 	}
 	
 	yuzhi = creatYuzhi_After(0.1, count);
-	glassYuzhi = creatYuzhi_Glass(count);
+//	glassYuzhi = creatYuzhi_Glass(count);
 
 	for(i = 1; i < HEIGHT - 1; i++) 
 	{
@@ -390,7 +390,7 @@ u8 creatYuzhi_Glass(u16 count)
 int creatYuzhi_After(float x, int num)
 {	
 	u16 yuzhiIndex, yuzhuleiji, glassPixelNum;
-	int i,j,countTo255;
+	int i,j;
 	u16 sobel_gray_array[256];
 	
 	//yuzhiIndex = num * x;
@@ -420,7 +420,6 @@ int creatYuzhi_After(float x, int num)
 	yuzhiIndex = (num-glassPixelNum) * x;
 	
 	yuzhuleiji = 0;
-	countTo255 = 0;
 	for(i=255; yuzhuleiji<yuzhiIndex ; i--)
 	{
 		yuzhuleiji = yuzhuleiji + sobel_gray_array[i];
@@ -428,6 +427,25 @@ int creatYuzhi_After(float x, int num)
 	
 	
 	return i;
+}
+
+
+void eraseHorizon()
+{
+	int i,j;
+		for(i = 1; i < HEIGHT - 1; i++) 
+	{
+		for(j = 1; j < WIDTH - 1; j++)
+		{		
+			if((i-y_circle)*(i-y_circle) + (j-x_circle)*(j-x_circle) < (r_circle-r_circle/6)*(r_circle-r_circle/6) && Pic_Buff_Dup[i][j] == 255)
+			{
+				 if(Pic_Buff_Dup[i-1][j] == 0 && Pic_Buff_Dup[i+1][j] == 0)
+				 {
+					 Pic_Buff_Dup[i][j] = 0; 
+				 }
+			}
+		}
+	}
 }
 
 
@@ -646,7 +664,8 @@ void send_Image(u8 originPic[][80])
  * 输出  ：液位稳定时输出液位（用flag1,flag2判断），否则输出-1，max表示
  */
 void Water_Level_Static(void)
-{	int max_level=0;
+{
+	int max_level=0;
 	int i, j;
 	int pixel_count_sort[9]={0};
 	int pixel_max[3]={0};
@@ -1033,4 +1052,7 @@ void OPTA()
 		}
 	}
 }
+
+
+
 

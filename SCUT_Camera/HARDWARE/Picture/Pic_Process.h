@@ -41,5 +41,6 @@ void EXTI3_ClearAndForbid(u8 forbid);
 void OPTA(void);
 void OPTATest(void);
 u8 creatYuzhi_Glass(u16);
+void eraseHorizon(void);
 #endif
 
