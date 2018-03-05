@@ -5,7 +5,8 @@
 extern int flag;
 extern volatile u8 ThereIsACircle; //Pic_Process.c中定义
 int TIM3_count = 0;
-
+int TIM2_count = 0;
+extern u8 timeIsUp;//定时器时间用尽标志 main定义
 //通用定时器3中断初始化
 //这里时钟选择为APB1的2倍，而APB1为42M
 //arr：自动重装值。
@@ -25,6 +26,17 @@ void TIM3_Int_Init(u16 arr,u16 psc)
 	
 	TIM3->CR1|=0x01;	//开定时器   By Bachman 2018 - 01 -19
 
+}
+
+void TIM2_Int_Init(u16 arr,u16 psc)
+{
+	RCC->APB1ENR|=1<<0;	//TIM2时钟使能    
+ 	TIM2->ARR=arr;  	  //设定计数器自动重装值 
+	TIM2->PSC=psc;  	  //预分频器
+		
+	TIM2->DIER|=1<<0;   //允许更新中断
+	TIM2->SR&=~(1<<0);	//清除中断标志位
+  MY_NVIC_Init(1,0,TIM2_IRQn,2);	//抢占0，子优先级0，组2	
 }
 
 //定时器3中断服务程序	 
@@ -56,5 +68,22 @@ void TIM3_IRQHandler(void)
 				}		
 	}	
 	TIM3->SR&=~(1<<0);//清除中断标志位 	    
+}
+
+//定时器2中断服务程序	 
+void TIM2_IRQHandler(void)
+{ 		   
+		TIM2->CR1&=0x00;	//关闭定时器   By Bachman 2018 - 01 -18
+		TIM2_count++;
+	if(TIM2_count > 2)
+	{
+				TIM2->CNT = 0;    // 计数器清零  By Bachman 2018 - 01 -18
+				if(TIM2->SR&0X0001)//溢出中断
+				{							
+						timeIsUp = 1;
+						On_Off = 0;//关断加水信号
+				}		
+	}	
+	TIM2->SR&=~(1<<0);//清除中断标志位 	    
 }
 

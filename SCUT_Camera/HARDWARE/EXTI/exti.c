@@ -5,7 +5,8 @@
 #include "Pic_Process.h"
 u8 ov_sta;
 extern volatile u8 ThereIsACircle; //Pic_Process.c中定义
-
+extern volatile u8 timeIsUp;
+extern u16 AddWaterTime;
  //外部中断5~9服务程序，读取最新一帧的图像
 void EXTI9_5_IRQHandler(void)
 {		 		
@@ -32,7 +33,10 @@ void EXTI3_IRQHandler(void)
 			ThereIsACircle = 0;
 		}
 		else
-		{		Light_On=1; 			//灯光打开
+		{		TIM2->CNT = 0;
+			  timeIsUp = 0;
+			  AddWaterTime = 0;
+				Light_On=1; 			//灯光打开
 				TIM3->CR1|=0x01;	//使能定时器
 				delay_ms(100);		//清除第一次中断
 				TIM3->SR&=~(1<<0);	//清除中断标志位			

@@ -42,8 +42,8 @@ void cameraSysInit()
 	EXTI9_Init();						//使能定时器捕获	
 	GpioInit();
 	EXTIX_Init();
-	TIM3_Int_Init(19999,7399);			//10Khz计数频率,2秒钟中断	
-
+	TIM3_Int_Init(19999,8399);			//10Khz计数频率,2秒钟中断	
+  TIM2_Int_Init(50000-1,16800-1);			//10Khz计数频率,2秒钟中断	
 }
 
 void EXTI3_ClearAndForbid(u8 forbid)
